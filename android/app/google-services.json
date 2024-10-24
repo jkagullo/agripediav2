@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "432764405515",
+    "firebase_url": "https://agripedia-c5439-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "agripedia-c5439",
+    "storage_bucket": "agripedia-c5439.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432764405515:android:6f666f9c13978904b0840e",
+        "android_client_info": {
+          "package_name": "com.example.agripedia.agripedia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZtxHczuQ7xjzp-PZizXpumyvQAeBR2cs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432764405515:android:7d4cfb84265a3813b0840e",
+        "android_client_info": {
+          "package_name": "com.example.agripediav2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZtxHczuQ7xjzp-PZizXpumyvQAeBR2cs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432764405515:android:f7a786437e0ceef2b0840e",
+        "android_client_info": {
+          "package_name": "com.example.agripediav3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZtxHczuQ7xjzp-PZizXpumyvQAeBR2cs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432764405515:android:d7d2c2e977fdbd16b0840e",
+        "android_client_info": {
+          "package_name": "com.example.databasetry"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZtxHczuQ7xjzp-PZizXpumyvQAeBR2cs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432764405515:android:c89f499897939cd6b0840e",
+        "android_client_info": {
+          "package_name": "com.example.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZtxHczuQ7xjzp-PZizXpumyvQAeBR2cs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
