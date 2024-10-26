@@ -95,7 +95,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
-                      color: Colors.black,
+                      color: Colors.lightGreen[900],
                     ),
                   ),
                 ],
@@ -111,7 +111,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.lightGreen[900],
                     ),
                   ),
                 ],
@@ -130,7 +130,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          color: Colors.black,
+                          color: Colors.lightGreen[900],
                         ),
                       ),
                     ),

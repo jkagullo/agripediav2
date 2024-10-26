@@ -76,6 +76,10 @@ flutter:
     - assets/lottie/thunder.json
     - assets/lottie/location.json
     - assets/lottie/temp.json
+    - assets/images/avatar.png
+    - assets/images/crop_icon.png
+    - assets/images/tomato_image.png
+    - assets/images/tomato_image1.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
