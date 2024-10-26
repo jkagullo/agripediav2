@@ -39,6 +39,12 @@ dependencies:
   firebase_auth: ^5.3.1
   cloud_firestore: ^5.4.4
   lottie: ^3.1.3
+  flutter_native_splash: ^2.4.2
+  geocoding: ^3.0.0
+  weather: ^3.1.1
+  geolocator: ^13.0.1
+  permission_handler: ^11.3.1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +69,13 @@ flutter:
   uses-material-design: true
   assets:
     - assets/lottie/login_animation.json
+    - assets/images/splash_icon.png
+    - assets/lottie/cloudy.json
+    - assets/lottie/rainy.json
+    - assets/lottie/sunny.json
+    - assets/lottie/thunder.json
+    - assets/lottie/location.json
+    - assets/lottie/temp.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
