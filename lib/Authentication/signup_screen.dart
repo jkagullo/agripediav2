@@ -2,8 +2,10 @@ import 'package:agripediav3/Authentication/login_screen.dart';
 import 'package:agripediav3/Components/my_button.dart';
 import 'package:agripediav3/Components/my_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:agripediav3/Authentication/signup.dart';
+import 'package:image_picker/image_picker.dart'; // import image picker
+import 'package:firebase_storage/firebase_storage.dart'; // import firebase storage
+import 'dart:io'; // import file handling
 
 class SignUpScreen extends StatefulWidget {
   SignUpScreen({super.key});
@@ -18,7 +20,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passwordController = TextEditingController();
 
   final SignUpService _signUpService = SignUpService();
+
   bool isLoading = false;
+  File? _imageFile; // variable to hold
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  // method to upload the imamge to Firebase Storage
+  Future<String?> _uploadImage() async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference storageRef = FirebaseStorage.instance.ref().child('profile_images/$fileName');
+      UploadTask uploadTask = storageRef.putFile(_imageFile!);
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
 
   //method to handle signup
   void signUserUp() async {
@@ -31,10 +60,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     String password = passwordController.text.trim();
 
     if(username.isNotEmpty && email.isNotEmpty && password.isNotEmpty){
+      String? imageUrl = await _uploadImage(); // upload image to firebase storage
       String? errorMessage = await _signUpService.signUpUser(
         name: username,
         email: email,
         password: password,
+        imageUrl: imageUrl,
       );
 
       if (errorMessage == null) {
@@ -89,8 +120,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Lottie.asset("assets/lottie/login_animation.json", height: 150, width: 150),
-                const SizedBox(height: 25),
                 const Text(
                   "Sign Up to Agripedia",
                   style: TextStyle(
@@ -106,6 +135,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     color: Colors.grey[700],
                     fontSize: 16,
                   ),
+                ),
+                const SizedBox(height: 25),
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: _imageFile != null
+                          ? FileImage(_imageFile!)
+                          : AssetImage('assets/images/default_profile.jpg'),
+                    ),
+                    Positioned(
+                      bottom: -10,
+                      left: 60,
+                      child: IconButton(
+                          onPressed: () {
+                            _pickImage();
+                          },
+                          icon: Icon(
+                            Icons.add_a_photo,
+                          ),
+                      ),
+                    )
+                  ],
                 ),
                 const SizedBox(height: 25),
                 MyTextField(

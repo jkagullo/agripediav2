@@ -11,7 +11,7 @@ class _SummaryWidgetState extends State<SummaryWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 35.0),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         height: 200,
         decoration: BoxDecoration(
@@ -22,12 +22,16 @@ class _SummaryWidgetState extends State<SummaryWidget> {
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(15.0),
+                padding: EdgeInsets.all(10.0),
                 height: 200,
-                width: 340,
+                width: 320,
                 decoration: BoxDecoration(
                   color: Colors.lightGreen[600],
                   borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -53,7 +57,7 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                           Text(
                             'Last crop analysis was 8 days ago.',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.normal,
                               color: Colors.white,
                             ),
@@ -101,12 +105,16 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(15.0),
                 height: 200,
-                width: 340,
+                width: 320,
                 decoration: BoxDecoration(
                   color: Colors.lightGreen[600],
                   borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +140,7 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                           Text(
                             'Last crop analysis was 8 days ago.',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.normal,
                               color: Colors.white,
                             ),

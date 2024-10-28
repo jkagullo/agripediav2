@@ -77,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 25),
                 MyTextField(
                   controller: usernameController,
-                  hintText: "Username",
+                  hintText: "Email",
                   obscureText: false,
                 ),
                 const SizedBox(height: 10),

@@ -43,7 +43,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       case 'haze':
       case 'dust':
       case 'fog':
-        return 'assets/lottie/cloudy.json';
+        return 'assets/lottie/cloudies.json';
       case 'rain':
       case 'drizzle':
       case 'shower rain':
@@ -52,7 +52,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         return 'assets/lottie/thunder.json';
       case 'clear':
         return 'assets/lottie/sunny.json';
-      default: return 'assets/lottie/cloudy.json';
+      default: return 'assets/lottie/cloudies.json';
     }
   }
 

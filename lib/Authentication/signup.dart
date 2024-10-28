@@ -6,7 +6,7 @@ class SignUpService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // signup function
-  Future<String?> signUpUser({required String name, required String email, required String password}) async {
+  Future<String?> signUpUser({required String name, required String email, required String password, String? imageUrl,}) async {
     try {
       // create a new user with Firebase Authentication
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -20,6 +20,7 @@ class SignUpService {
         await _firestore.collection('users').doc(user.uid).set({
           'name': name,
           'email': email,
+          'imageUrl': imageUrl, // save image URL to Firestore
         });
 
         return null;

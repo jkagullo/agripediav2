@@ -39,5 +39,9 @@ class LoginService {
       }
     }
   }
+
+  Future<void> signOutUser() async {
+    await _auth.signOut();
+  }
 }
 
