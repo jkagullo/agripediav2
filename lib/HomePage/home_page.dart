@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:agripediav3/Weather/weather_widget.dart';
 import 'package:agripediav3/Profile/profile_widget.dart';
@@ -6,6 +8,8 @@ import 'package:agripediav3/TasksList/tasks_widget.dart';
 import 'package:agripediav3/Components/add_crop_button.dart';
 import 'package:agripediav3/Analysis/analysis_page.dart';
 import 'package:agripediav3/Profile/profile_page.dart';
+
+import '../DatabaseService/add_crop_dialog.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -79,23 +83,98 @@ class HomePageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
-          WeatherWidget(),
-          const SizedBox(height: 15),
-          ProfileWidget(),
-          const SizedBox(height: 15),
-          SummaryWidget(),
-          const SizedBox(height: 15),
-          TasksWidget(),
-          const SizedBox(height: 15),
-          AddCropButton(
-            onTap: () {
-              // Add your crop addition logic here
-            },
-            text: 'Add Crop',
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            WeatherWidget(),
+            const SizedBox(height: 10),
+            ProfileWidget(),
+            const SizedBox(height: 10),
+            SummaryWidget(),
+            const SizedBox(height: 10),
+            TasksWidget(),
+            const SizedBox(height: 10),
+            AddCropButton(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.lightGreen[50],
+                  builder: (BuildContext context) {
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextButton(
+                            style: ButtonStyle(
+                          padding: WidgetStateProperty.all<EdgeInsets>(
+                            EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                          ),
+                      ),
+                            onPressed: () {
+                              Navigator.pop(context); // Close bottom sheet
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AddCropDialog(),
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    "Add Manually",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.lightGreen[900],
+                                  ),
+                                ),
+                                Icon(
+                                    Icons.add,
+                                    color: Colors.lightGreen[900],
+                                ),
+                              ],
+                            ),
+                          ),
+                          TextButton(
+                            style: ButtonStyle(
+                              padding: WidgetStateProperty.all<EdgeInsets>(
+                                EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context); // Close bottom sheet
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AddCropDialog(),
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                              Text(
+                              "Add using QR Code",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.lightGreen[900],
+                              ),
+                            ),
+                                Icon(
+                                    Icons.qr_code,
+                                    color: Colors.lightGreen[900],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              text: 'Add Crop',
+            ),
+          ],
+        ),
       ),
     );
   }

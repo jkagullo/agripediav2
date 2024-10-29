@@ -156,7 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             Icons.add_a_photo,
                           ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 25),
