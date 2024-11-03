@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:agripediav3/DatabaseService/add_crop_manual.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class AddCropDialog extends StatefulWidget {
   const AddCropDialog({super.key});
@@ -12,6 +14,17 @@ class _AddCropDialogState extends State<AddCropDialog> {
   final TextEditingController cropNameController = TextEditingController();
   final TextEditingController hardwareIDController = TextEditingController();
   DateTime? plantingDate;
+  File? selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        selectedImage = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +39,17 @@ class _AddCropDialogState extends State<AddCropDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          selectedImage != null
+              ? Image.file(selectedImage!, height: 100)
+              : TextButton.icon(
+              onPressed: _pickImage,
+                icon: Icon(Icons.image, color: Colors.lightGreen[900]),
+                label: Text(
+              'Select Image',
+              style: TextStyle(color: Colors.lightGreen[900]),
+            ),
+          ),
+          const SizedBox(height: 15),
           TextField(
             controller: cropNameController,
             decoration: InputDecoration(
@@ -106,7 +130,7 @@ class _AddCropDialogState extends State<AddCropDialog> {
             String cropName = cropNameController.text.trim();
             String hardwareID = hardwareIDController.text.trim();
             if (cropName.isNotEmpty && plantingDate != null && hardwareID.isNotEmpty) {
-              await addCropToUser(cropName, plantingDate!, hardwareID);
+              await addCropToUser(cropName, plantingDate!, hardwareID, selectedImage);
               Navigator.pop(context);
             } else {
               // Handle empty fields
