@@ -47,6 +47,7 @@ dependencies:
   permission_handler: ^11.3.1
   http: ^1.2.2
   image_picker: ^1.1.2
+  intl: ^0.19.0
 
 
 dev_dependencies:
@@ -85,6 +86,10 @@ flutter:
     - assets/images/tomato_image1.png
     - assets/images/default_profile.jpg
     - assets/lottie/cloudies.json
+    - assets/images/Analysis-humid.png
+    - assets/images/Analysis-sun.png
+    - assets/images/Analysis-temp.png
+    - assets/images/Analysis-water.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

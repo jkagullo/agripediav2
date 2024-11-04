@@ -18,7 +18,10 @@ Future<List<Map<String, dynamic>>> fetchCropDashboard() async {
 
     QuerySnapshot snapshot = await cropsCollection.get();
     for (var doc in snapshot.docs) {
-      crops.add(doc.data() as Map <String, dynamic>);
+      // Include the document ID as cropID
+      Map<String, dynamic> cropData = doc.data() as Map<String, dynamic>;
+      cropData['cropID'] = doc.id; // Assign the document ID to cropID
+      crops.add(cropData);
     }
   } catch (e){
     print('error fetching crop for dashboard');
