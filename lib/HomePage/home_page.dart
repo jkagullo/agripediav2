@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:agripediav3/Dashboard/dashboard_select.dart';
 import 'package:flutter/material.dart';
 import 'package:agripediav3/Weather/weather_widget.dart';
 import 'package:agripediav3/Profile/profile_widget.dart';
@@ -8,7 +8,6 @@ import 'package:agripediav3/TasksList/tasks_widget.dart';
 import 'package:agripediav3/Components/add_crop_button.dart';
 import 'package:agripediav3/Analysis/analysis_page.dart';
 import 'package:agripediav3/Profile/profile_page.dart';
-
 import '../DatabaseService/add_crop_dialog.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -25,6 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> widgetList = [
     HomePageContent(),
     AnalysisPage(),
+    DashboardSelect(),
     ProfilePage(),
   ];
 
@@ -54,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: widgetList[selectedIndex], // Use widgetList here safely
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.lightGreen[900],
+        unselectedItemColor: Colors.lightGreen[900],
         backgroundColor: Colors.lightGreen[50],
         currentIndex: selectedIndex,
         onTap: onItemTapped,
@@ -65,6 +66,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Analysis',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
