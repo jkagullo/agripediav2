@@ -3,8 +3,6 @@ import 'package:agripediav3/Authentication/login.dart';
 import 'package:agripediav3/Authentication/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:agripediav3/Authentication/login.dart';
-import 'package:agripediav3/Authentication/login_screen.dart';
 
 class ProfileWidget extends StatefulWidget {
   const ProfileWidget({super.key});
@@ -61,7 +59,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                   SizedBox(width: 10), // Add space between avatar and text
                   Text(
-                    _username != null ? 'Hi!, $_username' : 'Welcome, User',
+                    _username != null ? 'Hi, $_username' : 'Welcome, User',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
