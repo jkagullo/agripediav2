@@ -9,6 +9,9 @@ import 'package:agripediav3/Components/add_crop_button.dart';
 import 'package:agripediav3/Analysis/analysis_page.dart';
 import 'package:agripediav3/Profile/profile_page.dart';
 import '../DatabaseService/add_crop_dialog.dart';
+import 'package:agripediav3/Detection/detection_page.dart';
+import 'package:agripediav3/Analysis/analysis_select.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -23,9 +26,9 @@ class _MyHomePageState extends State<MyHomePage> {
   // Initialize widgetList directly
   final List<Widget> widgetList = [
     HomePageContent(),
-    AnalysisPage(),
+    AnalysisSelect(),
     DashboardSelect(),
-    ProfilePage(),
+    DetectionPage(),
   ];
 
   void onItemTapped(int index) {
@@ -72,11 +75,84 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.energy_savings_leaf_rounded),
+            label: 'Detection',
           ),
         ],
       ),
+      floatingActionButton: selectedIndex == 0
+        ? FloatingActionButton(
+        backgroundColor: Colors.lightGreen[900],
+        onPressed: () {
+          // define the FAB action here
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.lightGreen[50],
+            builder: (BuildContext context) {
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AddCropDialog(),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Add Manually",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.lightGreen[900],
+                            ),
+                          ),
+                          Icon(
+                            Icons.add,
+                            color: Colors.lightGreen[900],
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AddCropDialog(),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Add using QR Code",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.lightGreen[900],
+                            ),
+                          ),
+                          Icon(
+                            Icons.qr_code,
+                            color: Colors.lightGreen[900],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          );
+        },
+        child: const Icon(Icons.add),
+      )
+          : null,
     );
   }
 }
