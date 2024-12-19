@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: selectedIndex == 0
         ? FloatingActionButton(
-        backgroundColor: Colors.lightGreen[900],
+        backgroundColor: Colors.lightGreen[50],
         onPressed: () {
           // define the FAB action here
           showModalBottomSheet(
