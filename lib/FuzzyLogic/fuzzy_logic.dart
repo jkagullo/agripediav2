@@ -1,6 +1,6 @@
 class FuzzyLogic {
 
-  static String getSoilMoistureRecommendation(int rawSoilMoisture) {
+  static String getSoilMoistureRecommendation(rawSoilMoisture) {
 
     if (rawSoilMoisture < 30) {
       return "Crop needs water";
@@ -17,7 +17,7 @@ class FuzzyLogic {
     }
   }
 
-  static String getSoilMoistureStatus(int rawSoilMoisture) {
+  static String getSoilMoistureStatus(rawSoilMoisture) {
 
     if (rawSoilMoisture < 30) {
       return "Soil moisture is below (30%)";
@@ -34,7 +34,7 @@ class FuzzyLogic {
     }
   }
 
-  static String getHumidityRecommendation(int rawhHumidity) {
+  static String getHumidityRecommendation(rawhHumidity) {
 
     if (rawhHumidity < 50) {
       return "Crop needs humidity, mist or spray water";
@@ -45,7 +45,7 @@ class FuzzyLogic {
     }
   }
 
-  static String getHumidityStatus(int rawHumidity) {
+  static String getHumidityStatus(rawHumidity) {
 
     if (rawHumidity < 50) {
       return "Humidity is below 50%";
@@ -56,7 +56,7 @@ class FuzzyLogic {
     }
   }
 
-  static String getLightRecommendation(int rawLight) {
+  static String getLightRecommendation(rawLight) {
 
     if (rawLight <= 150) {
       return "Expose crop to more light";
@@ -71,7 +71,7 @@ class FuzzyLogic {
     }
   }
 
-  static String getLightStatus(int rawLight) {
+  static String getLightStatus(rawLight) {
 
     if (rawLight <= 150) {
       return "Light intensity is low";
@@ -86,7 +86,7 @@ class FuzzyLogic {
     }
   }
 
-  static String getTemperatureRecommendation(int rawTemperature){
+  static String getTemperatureRecommendation(rawTemperature){
 
     if (rawTemperature <= 10) {
       return "Move the crop to a warmer location";
@@ -101,7 +101,7 @@ class FuzzyLogic {
     }
   }
 
-  static getTemperatureStatus(int rawTemperature) {
+  static getTemperatureStatus(rawTemperature) {
 
     if (rawTemperature < 10) {
       return "Temperature is below 10%";
@@ -117,10 +117,10 @@ class FuzzyLogic {
   }
 
   static String getPlantCondition({
-    required int rawSoilMoisture,
-    required int rawTemperature,
-    required int rawHumidity,
-    required int rawLight,
+    required rawSoilMoisture,
+    required rawTemperature,
+    required rawHumidity,
+    required rawLight,
   }) {
     String soilMoistureStatus = getSoilMoistureStatus(rawSoilMoisture);
     String tempStatus = getTemperatureStatus(rawTemperature);
