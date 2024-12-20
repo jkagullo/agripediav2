@@ -13,7 +13,7 @@ class CropDashboard extends StatefulWidget {
 }
 
 class _CropDashboardState extends State<CropDashboard> {
-  late Stream<QuerySnapshot> liveDataStream;
+  late Stream<DocumentSnapshot> liveDataStream = Stream.empty(); // Initialize with an empty stream
   String? cropName;
   bool loading = true;
   String soil = '';
@@ -26,27 +26,7 @@ class _CropDashboardState extends State<CropDashboard> {
   void initState() {
     super.initState();
     fetchCropName();
-    liveDataStream = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('crops')
-        .doc(widget.cropId)
-        .collection('liveData')
-        .limit(1)
-        .snapshots();
-
-    // Listen for updates to live data
-    liveDataStream.listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        final latestData = snapshot.docs.first.data() as Map<String, dynamic>;
-        setState(() {
-          soil = latestData['soil'].toString();
-          temperature = latestData['temperature'].toString();
-          light = latestData['light'].toString();
-          humidity = latestData['humidity'].toString();
-        });
-      }
-    });
+    fetchLiveData();
   }
 
   Future<void> fetchCropName() async {
@@ -64,6 +44,90 @@ class _CropDashboardState extends State<CropDashboard> {
       });
     } catch (e) {
       print('Error fetching crop name: $e');
+    }
+  }
+
+  void fetchLiveData() async {
+    try {
+      // Fetch the hardwareID asynchronously
+      DocumentSnapshot cropDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('crops')
+          .doc(widget.cropId)
+          .get();
+
+      String hardwareID = cropDoc['hardwareID']; // Get the hardwareID from the crop document
+
+      // Fetch the latest date document from the cropData collection using document ID
+      QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
+          .collection('hardwares')
+          .doc(hardwareID)
+          .collection('cropData')
+          .orderBy(FieldPath.documentId, descending: true) // Order by document ID (representing the date)
+          .limit(1)
+          .get();
+
+      if (dateSnapshot.docs.isEmpty) {
+        print('No date data found');
+        return;
+      }
+
+      // Get the latest date document ID
+      String latestDate = dateSnapshot.docs.first.id; // This is the document ID representing the date (e.g., 2024-12-20)
+
+      // Now, query the available hour collections for the latest hour dynamically
+      QuerySnapshot hourSnapshot = await FirebaseFirestore.instance
+          .collection('hardwares')
+          .doc(hardwareID)
+          .collection('cropData')
+          .doc(latestDate)
+          .collection('14-21') // Temporary static reference, need to make this dynamic
+          .orderBy(FieldPath.documentId) // Order by document ID or timestamp
+          .limit(1)
+          .get();
+
+      // Add a check here for other hour subcollections dynamically
+      // Example for fetching dynamically the most recent hour
+      List<String> availableHours = ['14-21', '14-41']; // You can dynamically get this list
+      String latestHourCollection = availableHours.first; // Assume `14-21` is the latest for now
+
+      hourSnapshot = await FirebaseFirestore.instance
+          .collection('hardwares')
+          .doc(hardwareID)
+          .collection('cropData')
+          .doc(latestDate)
+          .collection(latestHourCollection)
+          .orderBy(FieldPath.documentId)
+          .limit(1)
+          .get();
+
+      if (hourSnapshot.docs.isEmpty) {
+        print('No hour data found');
+        return;
+      }
+
+      // Get the latest hour subcollection document
+      DocumentSnapshot latestHourDoc = hourSnapshot.docs.first; // The document containing live data
+
+      // Extract the live data from the document
+      Map<String, dynamic> liveData = latestHourDoc.data() as Map<String, dynamic>;
+      setState(() {
+        soil = liveData['soilSensor1'].toString();
+        temperature = liveData['temperature'].toString();
+        light = liveData['light'].toString();
+        humidity = liveData['humidity'].toString();
+      });
+
+      setState(() {}); // Rebuild the widget after setting the live data
+
+      print('Soil: $soil');
+      print('Temperature: $temperature');
+      print('Light: $light');
+      print('Humidity: $humidity');
+
+    } catch (e) {
+      print('Error fetching live data: $e');
     }
   }
 
@@ -238,8 +302,7 @@ class _CropDashboardState extends State<CropDashboard> {
                   title,
                   style: const TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w700,
                     color: Color.fromRGBO(38, 50, 56, 1),
                   ),
                 ),
