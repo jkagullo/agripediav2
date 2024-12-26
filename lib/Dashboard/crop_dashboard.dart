@@ -44,6 +44,7 @@ class _CropDashboardState extends State<CropDashboard> {
       setState(() {
         cropName = cropDoc['cropName'];
         loading = false;
+        print("date today: $formattedDate");
       });
     } catch (e) {
       print('Error fetching crop name: $e');
@@ -63,12 +64,14 @@ class _CropDashboardState extends State<CropDashboard> {
       String hardwareID = cropDoc['hardwareID']; // Get the hardwareID from the crop document
       hId = hardwareID;
 
+      String latestDateToday = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
       // Fetch the latest date document from the cropData collection using document ID
       QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
           .collection('hardwares')
           .doc(hardwareID)
-          .collection('cropData')
-          .orderBy(FieldPath.documentId, descending: true) // Order by document ID (representing the date)
+          .collection('2024-12-27')
+          .orderBy('createdAt', descending: true)
           .limit(1)
           .get();
 
@@ -80,33 +83,31 @@ class _CropDashboardState extends State<CropDashboard> {
       // Get the latest date document ID
       String latestDate = dateSnapshot.docs.first.id; // This is the document ID representing the date (e.g., 2024-12-20)
       date = latestDate;
+      print("latest date (after date retrieve): $date");
 
       // Now, query the available hour collections for the latest hour dynamically
-      QuerySnapshot hourSnapshot = await FirebaseFirestore.instance
-          .collection('hardwares')
-          .doc(hardwareID)
-          .collection('cropData')
-          .doc(latestDate)
-          .collection('hours') // Temporary static reference, need to make this dynamic
-          .orderBy(FieldPath.documentId, descending: true) // Order by document ID or timestamp
-          .limit(1)
-          .get();
-
-      if (hourSnapshot.docs.isEmpty) {
-        print('No hour data found');
-        return;
-      }
+      // QuerySnapshot hourSnapshot = await FirebaseFirestore.instance
+      //     .collection('hardwares')
+      //     .doc(hardwareID)
+      //     .collection(latestDate) // Dynamic date collection
+      //     .limit(1)
+      //     .get();
+      //
+      // if (hourSnapshot.docs.isEmpty) {
+      //   print('No hour data found');
+      //   return;
+      // }
 
       // Get the latest hour subcollection document
-      DocumentSnapshot latestHourDoc = hourSnapshot.docs.first; // The document containing live data
-      hour = latestHourDoc.id;
+      DocumentSnapshot latestDateDoc = dateSnapshot.docs.first; // The document containing live data
+      // hour = latestHourDoc.id;
 
       // Extract the live data from the document
-      Map<String, dynamic> liveData = latestHourDoc.data() as Map<String, dynamic>;
+      Map<String, dynamic> liveData = latestDateDoc.data() as Map<String, dynamic>;
       setState(() {
-        soil = liveData['soil1'].toString();
+        soil = liveData['soilMoisture1'].toString();
         temperature = liveData['temperature'].toString();
-        light = liveData['light'].toString();
+        light = liveData['lightIntensity'].toString();
         humidity = liveData['humidity'].toString();
       });
 
