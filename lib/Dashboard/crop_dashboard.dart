@@ -21,6 +21,9 @@ class _CropDashboardState extends State<CropDashboard> {
   String light = '';
   String humidity = '';
   String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String date = '';
+  String hour = '';
+  String hId = '';
 
   @override
   void initState() {
@@ -58,6 +61,7 @@ class _CropDashboardState extends State<CropDashboard> {
           .get();
 
       String hardwareID = cropDoc['hardwareID']; // Get the hardwareID from the crop document
+      hId = hardwareID;
 
       // Fetch the latest date document from the cropData collection using document ID
       QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
@@ -75,6 +79,7 @@ class _CropDashboardState extends State<CropDashboard> {
 
       // Get the latest date document ID
       String latestDate = dateSnapshot.docs.first.id; // This is the document ID representing the date (e.g., 2024-12-20)
+      date = latestDate;
 
       // Now, query the available hour collections for the latest hour dynamically
       QuerySnapshot hourSnapshot = await FirebaseFirestore.instance
@@ -82,23 +87,8 @@ class _CropDashboardState extends State<CropDashboard> {
           .doc(hardwareID)
           .collection('cropData')
           .doc(latestDate)
-          .collection('14-21') // Temporary static reference, need to make this dynamic
-          .orderBy(FieldPath.documentId) // Order by document ID or timestamp
-          .limit(1)
-          .get();
-
-      // Add a check here for other hour subcollections dynamically
-      // Example for fetching dynamically the most recent hour
-      List<String> availableHours = ['14-21', '14-41']; // You can dynamically get this list
-      String latestHourCollection = availableHours.first; // Assume `14-21` is the latest for now
-
-      hourSnapshot = await FirebaseFirestore.instance
-          .collection('hardwares')
-          .doc(hardwareID)
-          .collection('cropData')
-          .doc(latestDate)
-          .collection(latestHourCollection)
-          .orderBy(FieldPath.documentId)
+          .collection('hours') // Temporary static reference, need to make this dynamic
+          .orderBy(FieldPath.documentId, descending: true) // Order by document ID or timestamp
           .limit(1)
           .get();
 
@@ -109,11 +99,12 @@ class _CropDashboardState extends State<CropDashboard> {
 
       // Get the latest hour subcollection document
       DocumentSnapshot latestHourDoc = hourSnapshot.docs.first; // The document containing live data
+      hour = latestHourDoc.id;
 
       // Extract the live data from the document
       Map<String, dynamic> liveData = latestHourDoc.data() as Map<String, dynamic>;
       setState(() {
-        soil = liveData['soilSensor1'].toString();
+        soil = liveData['soil1'].toString();
         temperature = liveData['temperature'].toString();
         light = liveData['light'].toString();
         humidity = liveData['humidity'].toString();
@@ -125,6 +116,10 @@ class _CropDashboardState extends State<CropDashboard> {
       print('Temperature: $temperature');
       print('Light: $light');
       print('Humidity: $humidity');
+      print("Date: $date");
+      print("Hour: $hour");
+      print("Hardware ID: $hId");
+
 
     } catch (e) {
       print('Error fetching live data: $e');

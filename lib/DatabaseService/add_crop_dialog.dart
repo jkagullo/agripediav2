@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class AddCropDialog extends StatefulWidget {
-  const AddCropDialog({super.key});
+  final String? initialHardwareID;
+  const AddCropDialog({super.key, this.initialHardwareID});
 
   @override
   State<AddCropDialog> createState() => _AddCropDialogState();

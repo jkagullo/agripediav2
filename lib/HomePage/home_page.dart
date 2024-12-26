@@ -12,6 +12,8 @@ import '../DatabaseService/add_crop_dialog.dart';
 import 'package:agripediav3/Detection/detection_page.dart';
 import 'package:agripediav3/Analysis/analysis_select.dart';
 
+import '../DatabaseService/add_crop_qr.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -226,7 +228,7 @@ class HomePageContent extends StatelessWidget {
                               Navigator.pop(context); // Close bottom sheet
                               showDialog(
                                 context: context,
-                                builder: (BuildContext context) => AddCropDialog(),
+                                builder: (BuildContext context) => AddCropQR(),
                               );
                             },
                             child: Row(
