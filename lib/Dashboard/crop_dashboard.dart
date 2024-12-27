@@ -73,7 +73,7 @@ class _CropDashboardState extends State<CropDashboard> {
       QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
           .collection('hardwares')
           .doc(hardwareID)
-          .collection('2024-12-27')
+          .collection(latestDateToday)
           .orderBy('createdAt', descending: true)
           .limit(1)
           .get();
