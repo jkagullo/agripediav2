@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:agripediav3/FuzzyLogic/fuzzy_logic.dart';
-import 'package:agripediav3/FuzzyLogic/fuzzy_db.dart';
 
 class TasksWidget extends StatefulWidget {
   const TasksWidget({super.key});
@@ -42,41 +42,46 @@ class _TasksWidgetState extends State<TasksWidget> {
             itemCount: crops.length,
             itemBuilder: (context, index) {
               final crop = crops[index];
-              return StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .collection('crops')
-                    .doc(crop['cropID'])
-                    .collection('liveData')
-                    .limit(1)
-                    .snapshots(),
+              return FutureBuilder<Map<String, dynamic>>(
+                future: fetchLiveData(crop['hardwareID']),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting){
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty){
-                    return const Center(child: Text('No live data available'));
+
+                  if (!snapshot.hasData) {
+                    return const Center(child: Text('No live data available.'));
                   }
 
-                  final data = snapshot.data!.docs.first.data() as Map<String, dynamic>? ?? {};
-                  final soil = data['soil'] ?? 0;
-                  final temperature = data['temperature'] ?? 0;
-                  final light = data['light'] ?? 0;
-                  final humidity = data['humidity'] ?? 0;
+                  final liveData = snapshot.data!;
+                  final soil = liveData['soilMoisture1'] ?? 0.0;
+                  final temperature = liveData['temperature'] ?? 0.0;
+                  final light = liveData['lightIntensity'] ?? 0.0;
+                  final humidity = liveData['humidity'] ?? 0.0;
+
+                  print("==========================================");
+                  print("Task Verify for crop: ${crop['cropName']}");
+                  print("Soil: $soil");
+                  print("Temperature: $temperature");
+                  print("Light: $light");
+                  print("Humidity: $humidity");
 
                   final soilRecommendation = FuzzyLogic.getSoilMoistureRecommendation(soil);
                   final temperatureRecommendation = FuzzyLogic.getTemperatureRecommendation(temperature);
                   final lightRecommendation = FuzzyLogic.getLightRecommendation(light);
                   final humidityRecommendation = FuzzyLogic.getHumidityRecommendation(humidity);
 
-                  // final soilStatus = FuzzyLogic.getSoilMoistureStatus(soil);
-                  // final temperatureStatus = FuzzyLogic.getTemperatureStatus(temperature);
-                  // final lightStatus = FuzzyLogic.getLightStatus(light);
-                  // final humidityStatus = FuzzyLogic.getHumidityStatus(humidity);
-                  final status = FuzzyLogic.getPlantCondition(rawSoilMoisture: soil, rawTemperature: temperature, rawHumidity: humidity, rawLight: light);
+                  final status = FuzzyLogic.getPlantCondition(
+                    rawSoilMoisture: soil,
+                    rawTemperature: temperature,
+                    rawHumidity: humidity,
+                    rawLight: light,
+                  );
 
-                  if (soilRecommendation.isNotEmpty || temperatureRecommendation.isNotEmpty || lightRecommendation.isNotEmpty || humidityRecommendation.isNotEmpty){
+                  if (soilRecommendation.isNotEmpty ||
+                      temperatureRecommendation.isNotEmpty ||
+                      lightRecommendation.isNotEmpty ||
+                      humidityRecommendation.isNotEmpty) {
                     return CropTaskCard(
                       cropName: crop['cropName'],
                       status: status,
@@ -87,8 +92,8 @@ class _TasksWidgetState extends State<TasksWidget> {
                         if (humidityRecommendation.isNotEmpty) "Humidity: $humidityRecommendation",
                       ].join("\n"),
                     );
-                  }else {
-                    return SizedBox.shrink();
+                  } else {
+                    return const SizedBox.shrink();
                   }
                 },
               );
@@ -113,10 +118,10 @@ class _TasksWidgetState extends State<TasksWidget> {
       }
 
       final crops = cropsQuery.docs.map((doc) {
-        debugPrint("Crop retrieved: ${doc.data()}");
         return {
-          'cropID': doc.id, // Ensure Firestore document ID is used
-          'cropName': doc['cropName'], // Field must match Firestore
+          'cropID': doc.id,
+          'cropName': doc['cropName'],
+          'hardwareID': doc['hardwareID'],
         };
       }).toList();
 
@@ -127,10 +132,36 @@ class _TasksWidgetState extends State<TasksWidget> {
     }
   }
 
+  Future<Map<String, dynamic>> fetchLiveData(String hardwareID) async {
+    try {
+      String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      print("Today's date: $todayDate");
 
+      QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
+          .collection('hardwares')
+          .doc(hardwareID)
+          .collection(todayDate)
+          .orderBy('createdAt', descending: true)
+          .limit(1)
+          .get();
+
+      print("Data found for hardwareID: $hardwareID on date: $todayDate");
+
+      if (dateSnapshot.docs.isEmpty) {
+        print("No data found for hardwareID: $hardwareID on date: $todayDate");
+        return {};
+      }
+
+      DocumentSnapshot latestDataDoc = dateSnapshot.docs.first;
+      return latestDataDoc.data() as Map<String, dynamic>;
+    } catch (e) {
+      debugPrint("Error fetching live data: $e");
+      return {};
+    }
+  }
 }
 
-class CropTaskCard extends StatelessWidget{
+class CropTaskCard extends StatelessWidget {
   final String cropName;
   final String status;
   final String task;
@@ -143,7 +174,7 @@ class CropTaskCard extends StatelessWidget{
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Card(
       color: Colors.lightGreen[600],
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -157,13 +188,11 @@ class CropTaskCard extends StatelessWidget{
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.lightGreen[50]),
             ),
             const SizedBox(height: 8.0),
-            Text('Status: $status', style: TextStyle(color: Colors.lightGreen[50]),),
+            Text('Status: $status', style: TextStyle(color: Colors.lightGreen[50])),
             const SizedBox(height: 12.0),
             Text(
               task,
-              style: TextStyle(
-                color: Colors.lightGreen[50],
-              ),
+              style: TextStyle(color: Colors.lightGreen[50]),
             ),
           ],
         ),

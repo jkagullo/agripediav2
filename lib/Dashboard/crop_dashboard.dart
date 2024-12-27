@@ -16,7 +16,10 @@ class _CropDashboardState extends State<CropDashboard> {
   late Stream<DocumentSnapshot> liveDataStream = Stream.empty(); // Initialize with an empty stream
   String? cropName;
   bool loading = true;
-  String soil = '';
+  String soil1 = '';
+  String soil2 = '';
+  String soil3 = '';
+  String soilFinal = '';
   String temperature = '';
   String light = '';
   String humidity = '';
@@ -104,8 +107,18 @@ class _CropDashboardState extends State<CropDashboard> {
 
       // Extract the live data from the document
       Map<String, dynamic> liveData = latestDateDoc.data() as Map<String, dynamic>;
+      // Parse soil moisture values as numbers, calculate the average, and store as string
+      double soilMoisture1 = double.tryParse(liveData['soilMoisture1'].toString()) ?? 0.0;
+      double soilMoisture2 = double.tryParse(liveData['soilMoisture2'].toString()) ?? 0.0;
+      double soilMoisture3 = double.tryParse(liveData['soilMoisture3'].toString()) ?? 0.0;
+
+      double soilAverage = (soilMoisture1 + soilMoisture2 + soilMoisture3) / 3;
+
       setState(() {
-        soil = liveData['soilMoisture1'].toString();
+        soil1 = soilMoisture1.toStringAsFixed(2); // Keep two decimal places
+        soil2 = soilMoisture2.toStringAsFixed(2);
+        soil3 = soilMoisture3.toStringAsFixed(2);
+        soilFinal = soilAverage.toStringAsFixed(2); // Save average as string
         temperature = liveData['temperature'].toString();
         light = liveData['lightIntensity'].toString();
         humidity = liveData['humidity'].toString();
@@ -113,7 +126,7 @@ class _CropDashboardState extends State<CropDashboard> {
 
       setState(() {}); // Rebuild the widget after setting the live data
 
-      print('Soil: $soil');
+      print('Soil: $soilFinal');
       print('Temperature: $temperature');
       print('Light: $light');
       print('Humidity: $humidity');
@@ -188,7 +201,7 @@ class _CropDashboardState extends State<CropDashboard> {
                     title: 'Water',
                     icon: 'assets/images/Analysis-water.png',
                     color: const Color.fromRGBO(30, 136, 229, 1),
-                    value: soil,
+                    value: soilFinal,
                     loading: loading,
                   ),
                   const SizedBox(width: 13),
