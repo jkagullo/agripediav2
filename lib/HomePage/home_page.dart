@@ -13,6 +13,7 @@ import 'package:agripediav3/Detection/detection_page.dart';
 import 'package:agripediav3/Analysis/analysis_select.dart';
 
 import '../DatabaseService/add_crop_qr.dart';
+import '../Settings/settings_page.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -31,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     AnalysisSelect(),
     DashboardSelect(),
     DetectionPage(),
+    SettingsPage(),
   ];
 
   void onItemTapped(int index) {
@@ -79,6 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.energy_savings_leaf_rounded),
             label: 'Detection',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
       ),
