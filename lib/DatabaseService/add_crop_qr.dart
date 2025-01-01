@@ -156,7 +156,7 @@ class _AddCropQRState extends State<AddCropQR> {
 
       await cropDoc.set({
         'cropName': cropNameController.text,
-        'plantingDate': plantingDate!.toIso8601String(),
+        'plantingDate': plantingDate,
         'hardwareID': scannedHardwareID,
         'imageUrl': imageUrl ?? '',
       });

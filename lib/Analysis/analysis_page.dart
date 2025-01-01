@@ -45,11 +45,12 @@ class _AnalysisPageState extends State<AnalysisPage> {
   };
 
   @override
-  void initState(){
+  void initState() {
+    super.initState();
     fetchCropName();
   }
 
-  Future<void> fetchCropName() async{
+  Future<void> fetchCropName() async {
     try {
       DocumentSnapshot cropDoc = await FirebaseFirestore.instance
           .collection('users')
@@ -80,90 +81,279 @@ class _AnalysisPageState extends State<AnalysisPage> {
           ],
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Analysis for ',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.lightGreen[900],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Analysis for ',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.lightGreen[900],
+                    ),
                   ),
-                ),
-                Text(
-                  cropName ?? 'Loading...',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.lightGreen[900],
+                  Text(
+                    cropName ?? 'Loading...',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.lightGreen[900],
+                    ),
                   ),
-                ),
-              ],
-            )
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(0),
-              child: DropdownButton<String>(
-                value: selectedRange,
-                onChanged: (value) {
-                  setState(() {
-                    selectedRange = value!;
-                  });
-                },
-                items: ['daily', 'weekly', 'monthly']
-                    .map((range) => DropdownMenuItem(
-                  value: range,
-                  child: Text(range.toUpperCase()),
-                ))
-                    .toList(),
+                ],
               ),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: LineChart(
-                LineChartData(
-                  gridData: FlGridData(show: true),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          return Text(value.toInt().toString());
-                        },
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(show: true),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: mockData[selectedRange] ?? [],
-                      isCurved: true,
-                      barWidth: 2,
-                      color: Colors.blue,
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: Colors.blue.withOpacity(0.2),
-                      ),
-                    ),
-                  ],
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(0),
+                child: DropdownButton<String>(
+                  value: selectedRange,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedRange = value!;
+                    });
+                  },
+                  items: ['daily', 'weekly', 'monthly']
+                      .map((range) => DropdownMenuItem(
+                    value: range,
+                    child: Text(range.toUpperCase()),
+                  ))
+                      .toList(),
                 ),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: LineChart(
+                  LineChartData(
+                    gridData: FlGridData(show: true),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        axisNameWidget: Text("Temperature"),
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            return Text(value.toInt().toString());
+                          },
+                        ),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                    ),
+                    borderData: FlBorderData(show: true),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: mockData[selectedRange] ?? [],
+                        isCurved: true,
+                        barWidth: 2,
+                        color: Colors.green,
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: Colors.green.withOpacity(0.2),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Daily Overall Status'),
+                            Text('16.66'),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Weekly Overall Status'),
+                            Text('NaN'),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Monthly Overall Status'),
+                            Text('NaN'),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Overall Status'),
+                            Text('16.66'),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Soil Moisture 1",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Daily Mean'),
+                                SizedBox(height: 20),
+                                Text("75"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Daily Rate Change'),
+                                SizedBox(height: 20),
+                                Text("0.59"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Daily Status'),
+                                SizedBox(height: 20),
+                                Text("Bad"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Monthly Mean'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Monthly Rate Change'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Monthly Status'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Monthly Std'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Weekly Mean'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Weekly Rate Change'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Weekly Status'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Weekly Std'),
+                                SizedBox(height: 20),
+                                Text("NaN"),
+                              ],
+                            ),
+                          ],
+                        )
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
