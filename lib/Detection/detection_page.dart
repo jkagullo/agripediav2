@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DetectionPage extends StatefulWidget {
   const DetectionPage({super.key});
@@ -8,6 +11,9 @@ class DetectionPage extends StatefulWidget {
 }
 
 class _DetectionPageState extends State<DetectionPage> {
+  final String dateNow = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,129 +29,126 @@ class _DetectionPageState extends State<DetectionPage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.0),
-        child: Container(
-          height: 200,
-          padding: EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.0),
-            color: Colors.lightGreen[600],
-            border: Border.all(
-              color: Colors.black,
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tomarket',
-                      style: TextStyle(
-                        color: Colors.lightGreen[900],
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      "Humidity: 10%",
-                      style: TextStyle(
-                        color: Colors.lightGreen[50],
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "Light Intensity: 10%",
-                      style: TextStyle(
-                        color: Colors.lightGreen[50],
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "Temperature: 10%",
-                      style: TextStyle(
-                        color: Colors.lightGreen[50],
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "Soil Moisture: 10%",
-                      style: TextStyle(
-                        color: Colors.lightGreen[50],
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      "Detection Date",
-                      style: TextStyle(
-                        color: Colors.lightGreen[900],
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "8:43 | 12-12-2024",
-                      style: TextStyle(
-                        color: Colors.lightGreen[50],
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Image.asset(
-                          'assets/images/avatar.png',
-                          fit: BoxFit.cover,
+      body: StreamBuilder<User?>(
+        stream: _auth.authStateChanges(),
+        builder: (context, userSnapshot) {
+          if (userSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!userSnapshot.hasData) {
+            return const Center(
+              child: Text('No user is currently logged in.'),
+            );
+          }
+
+          final String userID = userSnapshot.data!.uid;
+
+          return StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(userID)
+                .collection('crops')
+                .snapshots(),
+            builder: (context, cropSnapshot) {
+              if (cropSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!cropSnapshot.hasData || cropSnapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No crops available.'));
+              }
+
+              final crops = cropSnapshot.data!.docs;
+
+              return ListView.builder(
+                itemCount: crops.length,
+                itemBuilder: (context, cropIndex) {
+                  final cropData = crops[cropIndex].data() as Map<String, dynamic>;
+                  final cropName = cropData['cropName'];
+                  final hardwareID = cropData['hardwareID'];
+
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Detection')
+                        .doc(hardwareID)
+                        .collection('2025-01-01') // Fetch for today's date
+                        .snapshots(),
+                    builder: (context, detectionSnapshot) {
+                      if (detectionSnapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (!detectionSnapshot.hasData || detectionSnapshot.data!.docs.isEmpty) {
+                        return SizedBox.shrink(); // Skip rendering if no detection data
+                      }
+
+                      final detections = detectionSnapshot.data!.docs;
+
+                      return ExpansionTile(
+                        title: Text(
+                          cropName,
+                          style: TextStyle(
+                            color: Colors.lightGreen[900],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Result",
-                        style: TextStyle(
-                          color: Colors.lightGreen[900],
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        subtitle: Text(
+                          "Detection Date: $dateNow",
+                          style: TextStyle(
+                            color: Colors.lightGreen[900],
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "No Disease Detected",
-                        style: TextStyle(
-                          color: Colors.lightGreen[50],
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+                        children: detections.map((detectionDoc) {
+                          final detectionData = detectionDoc.data() as Map<String, dynamic>;
+                          final cropBoxes = detectionData.entries
+                              .where((entry) => entry.key.contains('crop_box'))
+                              .toList();
+
+                          return Column(
+                            children: cropBoxes.map((entry) {
+                              final boxData = entry.value as Map<String, dynamic>;
+                              final imageUrl = boxData['croppedImageUrl1'] ?? boxData['croppedImageUrl2'];
+                              final result = boxData['result'] ?? 'Unknown';
+
+                              return ListTile(
+                                leading: imageUrl != null
+                                    ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                    : Icon(Icons.image, color: Colors.grey),
+                                title: Text(
+                                  entry.key,
+                                  style: TextStyle(
+                                    color: Colors.lightGreen[900],
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  "Result: $result",
+                                  style: TextStyle(
+                                    color: Colors.lightGreen[900],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                trailing: Text(
+                                  detectionDoc.id,
+                                  style: TextStyle(
+                                    color: Colors.lightGreen[900],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          );
+        },
       ),
     );
   }
