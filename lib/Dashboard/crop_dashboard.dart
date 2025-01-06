@@ -71,9 +71,7 @@ class _CropDashboardState extends State<CropDashboard> {
 
       // Fetch the latest date document from the cropData collection using document ID
       QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
-          .collection('hardwares')
-          .doc(hardwareID)
-          .collection(latestDateToday)
+          .collection(hardwareID)
           .orderBy('createdAt', descending: true)
           .limit(1)
           .get();

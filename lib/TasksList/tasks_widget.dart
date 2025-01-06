@@ -138,11 +138,9 @@ class _TasksWidgetState extends State<TasksWidget> {
       print("Today's date: $todayDate");
 
       QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
-          .collection('hardwares')
-          .doc(hardwareID)
-          .collection(todayDate)
-          .orderBy('createdAt', descending: true)
-          .limit(1)
+          .collection(hardwareID) // Directly access the hardwareID collection
+          .orderBy('createdAt', descending: true) // Sort by createdAt in descending order
+          .limit(1) // Get the latest document
           .get();
 
       print("Data found for hardwareID: $hardwareID on date: $todayDate");

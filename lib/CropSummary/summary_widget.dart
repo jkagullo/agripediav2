@@ -1,3 +1,5 @@
+import 'package:agripediav3/Analysis/analysis_page.dart';
+import 'package:agripediav3/Analysis/analysis_select.dart';
 import 'package:flutter/material.dart';
 import 'package:agripediav3/DatabaseService/crop_summary_db.dart';
 
@@ -89,7 +91,12 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                               ),
                               OutlinedButton(
                                 onPressed: () {
-                                  // Define what happens when Analysis button is pressed
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AnalysisSelect(),
+                                    ),
+                                  );
                                 },
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white,
