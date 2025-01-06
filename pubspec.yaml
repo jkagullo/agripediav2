@@ -50,6 +50,10 @@ dependencies:
   intl: ^0.19.0
   fl_chart: ^0.69.2
   mobile_scanner: ^6.0.2
+  tflite_flutter: ^0.11.0
+  image: ^4.3.0
+  tflite: ^1.1.2
+  path_provider: ^2.0.15
 
 
 dev_dependencies:
@@ -92,6 +96,8 @@ flutter:
     - assets/images/Analysis-sun.png
     - assets/images/Analysis-temp.png
     - assets/images/Analysis-water.png
+    - assets/october24.tflite
+    - assets/disease_labels.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

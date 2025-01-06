@@ -47,3 +47,6 @@ app.*.map.json
 
 # Local properties file
 /android/local.properties
+
+/assets/october24.h5
+/assets/october24.tflite

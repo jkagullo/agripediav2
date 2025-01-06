@@ -71,13 +71,16 @@ class _DetectionPageState extends State<DetectionPage> {
                     stream: FirebaseFirestore.instance
                         .collection('Detection')
                         .doc(hardwareID)
-                        .collection('2025-01-01') // Fetch for today's date
+                        .collection(dateNow) // Fetch for today's date
+                        .orderBy('createdAt', descending: true)
                         .snapshots(),
                     builder: (context, detectionSnapshot) {
                       if (detectionSnapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (!detectionSnapshot.hasData || detectionSnapshot.data!.docs.isEmpty) {
+                        print("Date now: $dateNow");
+                        print('No detection data available for $cropName');
                         return SizedBox.shrink(); // Skip rendering if no detection data
                       }
 
@@ -101,45 +104,82 @@ class _DetectionPageState extends State<DetectionPage> {
                         ),
                         children: detections.map((detectionDoc) {
                           final detectionData = detectionDoc.data() as Map<String, dynamic>;
+
+                          // Handle hardware format
                           final cropBoxes = detectionData.entries
                               .where((entry) => entry.key.contains('crop_box'))
                               .toList();
 
-                          return Column(
-                            children: cropBoxes.map((entry) {
-                              final boxData = entry.value as Map<String, dynamic>;
-                              final imageUrl = boxData['croppedImageUrl1'] ?? boxData['croppedImageUrl2'];
-                              final result = boxData['result'] ?? 'Unknown';
+                          if (cropBoxes.isNotEmpty) {
+                            // Hardware format detected
+                            return Column(
+                              children: cropBoxes.map((entry) {
+                                final boxData = entry.value as Map<String, dynamic>;
+                                final imageUrl = boxData['croppedImageUrl1'] ?? boxData['croppedImageUrl2'];
+                                final result = boxData['result'] ?? 'Unknown';
 
-                              return ListTile(
-                                leading: imageUrl != null
-                                    ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
-                                    : Icon(Icons.image, color: Colors.grey),
-                                title: Text(
-                                  entry.key,
-                                  style: TextStyle(
-                                    color: Colors.lightGreen[900],
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                return ListTile(
+                                  leading: imageUrl != null
+                                      ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                      : Icon(Icons.image, color: Colors.grey),
+                                  title: Text(
+                                    entry.key,
+                                    style: TextStyle(
+                                      color: Colors.lightGreen[900],
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                subtitle: Text(
-                                  "Result: $result",
-                                  style: TextStyle(
-                                    color: Colors.lightGreen[900],
-                                    fontSize: 14,
+                                  subtitle: Text(
+                                    "Result: $result",
+                                    style: TextStyle(
+                                      color: Colors.lightGreen[900],
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                                trailing: Text(
-                                  detectionDoc.id,
-                                  style: TextStyle(
-                                    color: Colors.lightGreen[900],
-                                    fontSize: 14,
+                                  trailing: Text(
+                                    detectionDoc.id,
+                                    style: TextStyle(
+                                      color: Colors.lightGreen[900],
+                                      fontSize: 14,
+                                    ),
                                   ),
+                                );
+                              }).toList(),
+                            );
+                          } else {
+                            // App format detected
+                            final imageUrl = detectionData['image'] ?? '';
+                            final result = detectionData['result'] ?? 'Unknown';
+
+                            return ListTile(
+                              leading: imageUrl.isNotEmpty
+                                  ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                  : Icon(Icons.image, color: Colors.grey),
+                              title: Text(
+                                cropName,
+                                style: TextStyle(
+                                  color: Colors.lightGreen[900],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              );
-                            }).toList(),
-                          );
+                              ),
+                              subtitle: Text(
+                                "Result: $result",
+                                style: TextStyle(
+                                  color: Colors.lightGreen[900],
+                                  fontSize: 14,
+                                ),
+                              ),
+                              trailing: Text(
+                                detectionDoc.id,
+                                style: TextStyle(
+                                  color: Colors.lightGreen[900],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            );
+                          }
                         }).toList(),
                       );
                     },
