@@ -9,8 +9,13 @@ plugins {
 
 android {
     namespace = "com.example.agripediav3"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
+
+    aaptOptions {
+        noCompress 'tflite'
+        noCompress 'lite'
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -24,7 +29,7 @@ android {
     defaultConfig {
         applicationId = "com.example.agripediav3"
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -32,6 +37,8 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.debug
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -42,7 +49,7 @@ flutter {
 
 dependencies {
     // Import the Firebase BoM (Bill of Materials)
-    implementation platform('com.google.firebase:firebase-bom:33.5.0')
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
 
     // Add the Firebase products you want to use (without specifying version numbers, BoM manages that)
     implementation 'com.google.firebase:firebase-analytics'
