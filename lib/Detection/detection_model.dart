@@ -106,37 +106,38 @@ class _DetectionPageState extends State<DetectionScreen> {
       });
 
       final firestore = FirebaseFirestore.instance;
-      final timestamp = DateTime.now().toUtc();
-      final date = DateFormat('yyyy-MM-dd').format(timestamp);  // This will format as '2024-01-07'
-      final time = DateFormat('HH:mm').format(timestamp); // This will format time as '14:30'
-      print("date detection: $date");
-      print("time detection: $time");
+      final timestamp = DateTime.now();
+      final date = DateFormat('yyyy-MM-dd').format(timestamp);
+      final time = DateFormat('HH:mm').format(timestamp);
 
-      final docRef = firestore
-          .collection('Detection')
-          .doc(widget.hardwareID)
-          .collection(date)
-          .doc(time);
-
-      // Initialize hardware document if it does not exist
+      // Initialize hardware document if it doesn't exist
       final hardwareDocRef = firestore.collection('Detection').doc(widget.hardwareID);
-      final hardwareDocSnapshot = await hardwareDocRef.get();
-      if (!hardwareDocSnapshot.exists) {
-        // If hardwareID document doesn't exist, initialize it
+      final hardwareSnapshot = await hardwareDocRef.get();
+      if (!hardwareSnapshot.exists) {
         await hardwareDocRef.set({'initialized': true});
       }
 
-      await docRef.set({
+      // Initialize date document if it doesn't exist
+      final dateDocRef = hardwareDocRef.collection('dates').doc(date);
+      final dateSnapshot = await dateDocRef.get();
+      if (!dateSnapshot.exists) {
+        await dateDocRef.set({'initialized': true});
+      }
+
+      // Upload detection result
+      final hourDocRef = dateDocRef.collection('hours').doc(time);
+      await hourDocRef.set({
         'image': imageUrl,
         'result': result,
         'createdAt': timestamp,
       });
 
-      print('Detection result uploaded');
+      print('Detection result uploaded successfully.');
     } catch (e) {
-      print('Upload error: $e');
+      print('Error uploading detection result: $e');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

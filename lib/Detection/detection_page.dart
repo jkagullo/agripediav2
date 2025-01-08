@@ -93,129 +93,87 @@ class _DetectionPageState extends State<DetectionPage> {
                     stream: FirebaseFirestore.instance
                         .collection('Detection')
                         .doc(hardwareID)
-                        .collection(dateNow) // Fetch for today's date
-                        .orderBy('createdAt', descending: true)
+                        .collection('dates') // Get all dates documents
                         .snapshots(),
-                    builder: (context, detectionSnapshot) {
-                      if (detectionSnapshot.connectionState == ConnectionState.waiting) {
+                    builder: (context, dateSnapshot) {
+                      if (dateSnapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
-                      if (!detectionSnapshot.hasData || detectionSnapshot.data!.docs.isEmpty) {
-                        print("Date now: $dateNow");
-                        print('No detection data available for $cropName');
-                        return SizedBox.shrink(); // Skip rendering if no detection data
+                      if (!dateSnapshot.hasData || dateSnapshot.data!.docs.isEmpty) {
+                        return SizedBox.shrink(); // No detection data
                       }
 
-                      final detections = detectionSnapshot.data!.docs;
+                      final dateDocs = dateSnapshot.data!.docs;
 
-                      return ExpansionTile(
-                        title: Text(
-                          cropName,
-                          style: TextStyle(
-                            color: Colors.lightGreen[900],
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Detection Date: $dateNow",
-                          style: TextStyle(
-                            color: Colors.lightGreen[900],
-                            fontSize: 14,
-                          ),
-                        ),
-                        children: detections.map((detectionDoc) {
-                          final detectionData = detectionDoc.data() as Map<String, dynamic>;
+                      return Column(
+                        children: dateDocs.map((dateDoc) {
+                          final dateData = dateDoc.data() as Map<String, dynamic>;
+                          final date = dateDoc.id; // The date document ID
 
-                          // Handle hardware format
-                          final cropBoxes = detectionData.entries
-                              .where((entry) => entry.key.contains('crop_box'))
-                              .toList();
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('Detection')
+                                .doc(hardwareID)
+                                .collection('dates')
+                                .doc(dateDoc.id) // Use the current date doc ID
+                                .collection('hours') // Fetch all hour documents for this date
+                                .orderBy('createdAt', descending: true) // Sort by time (optional)
+                                .snapshots(),
+                            builder: (context, hourSnapshot) {
+                              if (hourSnapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                              if (!hourSnapshot.hasData || hourSnapshot.data!.docs.isEmpty) {
+                                return const SizedBox.shrink(); // No hours data for this date
+                              }
 
-                          if (cropBoxes.isNotEmpty) {
-                            // Hardware format detected
-                            return Column(
-                              children: cropBoxes.map((entry) {
-                                final boxData = entry.value as Map<String, dynamic>;
-                                final imageUrl = boxData['croppedImageUrl1'] ?? boxData['croppedImageUrl2'];
-                                final result = boxData['result'] ?? 'Unknown';
+                              final hourDocs = hourSnapshot.data!.docs;
 
-                                return ListTile(
-                                  leading: GestureDetector(
-                                    onTap: () {
-                                      _showImageDialog(imageUrl);
-                                    },
-                                    child: imageUrl != null
-                                        ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
-                                        : Icon(Icons.image, color: Colors.lightGreen[900]),
+                              return ExpansionTile(
+                                title: Text(
+                                  '$cropName - Date: $date', // Display crop name with date
+                                  style: TextStyle(
+                                    color: Colors.lightGreen[900],
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  title: Text(
-                                    entry.key,
-                                    style: TextStyle(
-                                      color: Colors.lightGreen[900],
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    "Result: $result",
-                                    style: TextStyle(
-                                      color: Colors.lightGreen[900],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  trailing: Text(
-                                    detectionData['createdAt'] != null
-                                        ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate())
-                                        : 'N/A',
-                                    style: TextStyle(
-                                      color: Colors.lightGreen[900],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          } else {
-                            // App format detected
-                            final imageUrl = detectionData['image'] ?? '';
-                            final result = detectionData['result'] ?? 'Unknown';
-
-                            return ListTile(
-                              leading: GestureDetector(
-                                onTap: () {
-                                  _showImageDialog(imageUrl);
-                                },
-                                child: imageUrl != null
-                                    ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
-                                    : Icon(Icons.image, color: Colors.lightGreen[900]),
-                              ),
-                              title: Text(
-                                cropName,
-                                style: TextStyle(
-                                  color: Colors.lightGreen[900],
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                              subtitle: Text(
-                                "Result: $result",
-                                style: TextStyle(
-                                  color: Colors.lightGreen[900],
-                                  fontSize: 14,
-                                ),
-                              ),
-                              trailing: Text(
-                                detectionData['createdAt'] != null
-                                    ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate())
-                                    : 'N/A',
-                                style: TextStyle(
-                                  color: Colors.lightGreen[900],
-                                  fontSize: 14,
-                                ),
-                              ),
-                            );
-                          }
+                                children: hourDocs.map((hourDoc) {
+                                  final detectionData = hourDoc.data() as Map<String, dynamic>;
+
+                                  // Handle the hardware format (image, result, etc.)
+                                  final imageUrl = detectionData['image'] ?? '';
+                                  final result = detectionData['result'] ?? 'Unknown';
+
+                                  return ListTile(
+                                    leading: GestureDetector(
+                                      onTap: () {
+                                        _showImageDialog(imageUrl);
+                                      },
+                                      child: imageUrl.isNotEmpty
+                                          ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                          : Icon(Icons.image, color: Colors.lightGreen[900]),
+                                    ),
+                                    title: Text(
+                                      'Result: $result',
+                                      style: TextStyle(
+                                        color: Colors.lightGreen[900],
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      'Detected at: ${detectionData['createdAt'] != null ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate()) : 'N/A'}',
+                                      style: TextStyle(
+                                        color: Colors.lightGreen[900],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          );
                         }).toList(),
                       );
                     },

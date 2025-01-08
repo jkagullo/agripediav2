@@ -164,6 +164,9 @@ class _AddCropQRState extends State<AddCropQR> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Crop added successfully")),
       );
+
+      Navigator.of(context).pop(); // Close the dialog
+      Navigator.of(context).pop(); // Navigate back from the scanner screen
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error adding crop: $e")),
