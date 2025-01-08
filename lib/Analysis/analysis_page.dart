@@ -114,6 +114,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
               child: Padding(
                 padding: const EdgeInsets.all(0),
                 child: DropdownButton<String>(
+                  dropdownColor: Colors.lightGreen[50],
                   value: selectedRange,
                   onChanged: (value) {
                     setState(() {
@@ -178,7 +179,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                       Container(
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: Colors.lightGreen[100],
+                          color: Colors.lightGreen[300],
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(
@@ -193,7 +194,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                       Container(
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: Colors.lightGreen[100],
+                          color: Colors.lightGreen[300],
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(

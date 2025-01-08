@@ -53,6 +53,8 @@ dependencies:
   tflite_flutter: ^0.11.0
   image: ^4.3.0
   path_provider: ^2.0.15
+  carousel_slider: ^5.0.0
+  dots_indicator: ^3.0.0
 
 
 dev_dependencies:
@@ -97,6 +99,12 @@ flutter:
     - assets/images/Analysis-water.png
     - assets/october24.tflite
     - assets/disease_labels.txt
+    - assets/images/Cropedia-Sili1.png
+    - assets/images/Cropedia-Sili2.png
+    - assets/images/Cropedia-Sili3.png
+    - assets/images/Cropedia-Tomato1.png
+    - assets/images/Cropedia-Tomato2.png
+    - assets/images/Cropedia-Tomato3.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

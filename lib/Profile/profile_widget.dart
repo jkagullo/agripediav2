@@ -37,7 +37,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 35.0),
+      padding: EdgeInsets.symmetric(horizontal: 30),
       child: Container(
         height: 80,
         decoration: BoxDecoration(
@@ -59,9 +59,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                   SizedBox(width: 10), // Add space between avatar and text
                   Text(
-                    _username != null ? 'Hi, $_username' : 'Welcome, User',
+                    _username != null ? 'Hello, $_username' : 'Welcome, User',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.lightGreen[900],
                     ),

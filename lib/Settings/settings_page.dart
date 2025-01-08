@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -123,9 +125,9 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightGreen[50],
+      backgroundColor: Colors.lightGreen[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen[50],
+        backgroundColor: Colors.lightGreen[100],
         title: Text(
           "Settings",
           style: TextStyle(
@@ -149,10 +151,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: EdgeInsets.all(3),
                   width: 324,
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1,
-                    ),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -166,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       IconButton(
                         icon: Icon(
                             Icons.edit,
-                            color: Colors.lightGreen[600],
+                            color: Colors.lightGreen[900],
                         ),
                         iconSize: 20,
                         onPressed: _editUserName,
@@ -206,10 +204,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Container(
                         padding: EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 1,
-                          ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: ListTile(
@@ -219,12 +213,16 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           title: Text(cropName),
                           subtitle: Text(
-                              'Hardware ID: ${crop['hardwareID']}'),
+                              'Hardware ID: ${crop['hardwareID']}',
+                            style: TextStyle(
+                              color: Colors.lightGreen[900],
+                            ),
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit, color: Colors.blue),
+                                icon: Icon(Icons.edit, color: Colors.lightGreen[900]),
                                 onPressed: () =>
                                     _editCrop(cropId, cropName),
                               ),

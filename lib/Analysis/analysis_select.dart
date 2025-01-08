@@ -21,9 +21,9 @@ class _AnalysisSelectState extends State<AnalysisSelect> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightGreen[50],
+      backgroundColor: Colors.lightGreen[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen[50],
+        backgroundColor: Colors.lightGreen[100],
         title: Text(
           'Select Analysis',
           style: TextStyle(
@@ -101,11 +101,15 @@ class AnalysisContainer extends StatelessWidget {
         padding: EdgeInsets.all(10.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
-          color: Colors.lightGreen[600],
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
+          color: Colors.lightGreen[50],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: const Offset(0,3),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,7 +123,7 @@ class AnalysisContainer extends StatelessWidget {
                   Text(
                     crop['cropName'] ?? 'CropName',
                     style: TextStyle(
-                      color: Colors.lightGreen[50],
+                      color: Colors.lightGreen[900],
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -131,7 +135,7 @@ class AnalysisContainer extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Icon(
                 Icons.analytics,
-                color: Colors.lightGreen[50],
+                color: Colors.lightGreen[900],
               ),
             ),
           ],

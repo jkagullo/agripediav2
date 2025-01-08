@@ -66,13 +66,13 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 35.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Container(
         padding: EdgeInsets.all(10.0),
         height: 50,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(50),
+          color: Colors.lightGreen[50],
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3),
@@ -94,7 +94,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     _weather?.mainCondition ?? '',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.bold,
                       color: Colors.lightGreen[900],
                     ),
                   ),
@@ -129,7 +129,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                         _weather?.cityName ?? 'Loading...',
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.bold,
                           color: Colors.lightGreen[900],
                         ),
                       ),

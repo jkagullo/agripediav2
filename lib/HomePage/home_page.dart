@@ -11,6 +11,7 @@ import 'package:agripediav3/Components/add_crop_button.dart';
 import 'package:agripediav3/Analysis/analysis_page.dart';
 import 'package:agripediav3/Profile/profile_page.dart';
 import 'package:image_picker/image_picker.dart';
+import '../Cropedia/cropedia.dart';
 import '../DatabaseService/add_crop_dialog.dart';
 import 'package:agripediav3/Detection/detection_page.dart';
 import 'package:agripediav3/Analysis/analysis_select.dart';
@@ -35,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
     DashboardSelect(),
     DetectionPage(),
     SettingsPage(),
+    Cropedia(),
   ];
 
   void onItemTapped(int index) {
@@ -79,7 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               Text(
                 "Select Crop for Disease Detection",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.lightGreen[900],
+                ),
               ),
               const SizedBox(height: 10),
               ...crops.map(
@@ -87,8 +93,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   leading: crop['imageUrl'] != null
                       ? Image.network(crop['imageUrl'], height: 50, width: 50)
                       : Icon(Icons.agriculture, color: Colors.lightGreen[900]),
-                  title: Text(crop['cropName']),
-                  subtitle: Text("Hardware ID: ${crop['hardwareID']}"),
+                  title: Text(
+                      crop['cropName'],
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.lightGreen[900],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text("Hardware ID: ${crop['hardwareID']}", style: TextStyle(color: Colors.lightGreen[900]),),
                   onTap: () {
                     Navigator.pop(context);
                     _startDetection(crop, detectionMethod);
@@ -147,9 +160,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightGreen[50],
+      backgroundColor: Colors.lightGreen[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen[50],
+        backgroundColor: Colors.lightGreen[100],
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -165,35 +178,43 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.lightGreen[900],
         unselectedItemColor: Colors.lightGreen[900],
-        backgroundColor: Colors.lightGreen[50],
+        backgroundColor: Colors.grey[700],
         currentIndex: selectedIndex,
         onTap: onItemTapped,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: const Icon(Icons.home),
             label: 'Home',
+            backgroundColor: Colors.lightGreen[50],
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Analysis',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Dashboard',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.energy_savings_leaf_rounded),
             label: 'Detection',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.agriculture),
+            label: 'Cropedia',
           ),
         ],
       ),
       floatingActionButton: selectedIndex == 0
           ? FloatingActionButton(
         backgroundColor: Colors.lightGreen[50],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
         onPressed: () async {
           final crops = await fetchUserCrops();
 
@@ -270,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           );
         },
-        child: const Icon(Icons.add),
+        child: Icon(Icons.camera_alt, color: Colors.lightGreen[900],),
       )
           : null,
     );
@@ -282,18 +303,20 @@ class HomePageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Padding(
+      padding: EdgeInsets.zero, // Remove any default padding
       child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           children: [
             WeatherWidget(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
             ProfileWidget(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
             SummaryWidget(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
             TasksWidget(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
             AddCropButton(
               onTap: () {
                 showModalBottomSheet(
@@ -307,7 +330,7 @@ class HomePageContent extends StatelessWidget {
                         children: [
                           TextButton(
                             style: ButtonStyle(
-                              padding: WidgetStateProperty.all<EdgeInsets>(
+                              padding: MaterialStateProperty.all<EdgeInsets>(
                                 const EdgeInsets.all(20),
                               ),
                             ),
@@ -336,7 +359,7 @@ class HomePageContent extends StatelessWidget {
                           ),
                           TextButton(
                             style: ButtonStyle(
-                              padding: WidgetStateProperty.all<EdgeInsets>(
+                              padding: MaterialStateProperty.all<EdgeInsets>(
                                 const EdgeInsets.all(20),
                               ),
                             ),

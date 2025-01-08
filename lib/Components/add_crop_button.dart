@@ -18,13 +18,13 @@ class AddCropButton extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         margin: const EdgeInsets.symmetric(horizontal: 35.0),
         decoration: BoxDecoration(
-          color: Colors.lightGreen[800],
+          color: Colors.lightGreen[900],
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
           child: Text( text,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: Colors.lightGreen[50],
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),

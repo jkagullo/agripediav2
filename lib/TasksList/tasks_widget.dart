@@ -104,6 +104,7 @@ class _TasksWidgetState extends State<TasksWidget> {
     );
   }
 
+
   Future<List<Map<String, dynamic>>> fetchCropForTask() async {
     try {
       final cropsQuery = await FirebaseFirestore.instance
@@ -173,30 +174,78 @@ class CropTaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.lightGreen[600],
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              cropName,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.lightGreen[50]),
-            ),
-            const SizedBox(height: 8.0),
-            Text('Status: $status', style: TextStyle(color: Colors.lightGreen[50])),
-            const SizedBox(height: 12.0),
-            Text(
-              task,
-              style: TextStyle(color: Colors.lightGreen[50]),
-            ),
-          ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 0.01,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Card(
+        color: Colors.lightGreen[50],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                cropName,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.lightGreen[900],
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Status: $status',
+                style: TextStyle(
+                  color: Colors.lightGreen[900],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
+              ),
+              const SizedBox(height: 12.0),
+              if (task.isNotEmpty) ...[
+                if (task.contains("Soil:")) _buildTaskRow(
+                    Icons.grass, task.split("Soil:")[1].split("\n")[0].trim()),
+                if (task.contains("Temperature:")) _buildTaskRow(Icons.thermostat, task.split("Temperature:")[1].split("\n")[0].trim()),
+                if (task.contains("Light:")) _buildTaskRow(Icons.wb_sunny, task.split("Light:")[1].split("\n")[0].trim()),
+                if (task.contains("Humidity:")) _buildTaskRow(Icons.water_drop, task.split("Humidity:")[1].split("\n")[0].trim()),
+              ],
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _buildTaskRow(IconData icon, String recommendation) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.lightGreen[900]),
+        const SizedBox(width: 8.0),
+        Expanded(
+          child: Text(
+            recommendation,
+            style: TextStyle(
+              color: Colors.lightGreen[900],
+              fontSize: 15,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
 }
 
 class FuzzyLogic {
@@ -211,7 +260,7 @@ class FuzzyLogic {
     } else if (rawSoilMoisture >= 50 && rawSoilMoisture <= 80) {
       return "Reduce watering frequency";
     } else if (rawSoilMoisture > 80) {
-      return "Stop watering to avoid waterlogging";
+      return "Stop watering to avoid water logging";
     } else {
       return "Moisture level unknown";
     }

@@ -21,9 +21,9 @@ class _DashboardSelectState extends State<DashboardSelect> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightGreen[50],
+      backgroundColor: Colors.lightGreen[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen[50],
+        backgroundColor: Colors.lightGreen[100],
         title: Text(
           'Select Dashboard',
           style: TextStyle(
@@ -86,12 +86,16 @@ class CropContainer extends StatelessWidget {
         height: 75,
         padding: EdgeInsets.all(10.0),
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: const Offset(0,3),
+            ),
+          ],
           borderRadius: BorderRadius.circular(15.0),
-          color: Colors.lightGreen[600],
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
+          color: Colors.lightGreen[50],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +109,7 @@ class CropContainer extends StatelessWidget {
                   Text(
                     crop['cropName'] ?? 'Crop Name',
                     style: TextStyle(
-                      color: Colors.lightGreen[50],
+                      color: Colors.lightGreen[900],
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -113,7 +117,7 @@ class CropContainer extends StatelessWidget {
                   Text(
                     'Planting Date: ${crop['plantingDate']?.toDate().toString().substring(0, 10) ?? '(Date)'}',
                     style: TextStyle(
-                      color: Colors.lightGreen[50],
+                      color: Colors.lightGreen[900],
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
                     ),
@@ -125,7 +129,7 @@ class CropContainer extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Icon(
                 Icons.monitor,
-                color: Colors.lightGreen[50],
+                color: Colors.lightGreen[900],
               ),
             ),
           ],

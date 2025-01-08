@@ -14,12 +14,34 @@ class _DetectionPageState extends State<DetectionPage> {
   final String dateNow = DateFormat('yyyy-MM-dd').format(DateTime.now());
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  void _showImageDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Image.network(imageUrl),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightGreen[50],
+      backgroundColor: Colors.lightGreen[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen[50],
+        backgroundColor: Colors.lightGreen[100],
         title: Text(
           'Disease Detection History',
           style: TextStyle(
@@ -119,9 +141,14 @@ class _DetectionPageState extends State<DetectionPage> {
                                 final result = boxData['result'] ?? 'Unknown';
 
                                 return ListTile(
-                                  leading: imageUrl != null
-                                      ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
-                                      : Icon(Icons.image, color: Colors.grey),
+                                  leading: GestureDetector(
+                                    onTap: () {
+                                      _showImageDialog(imageUrl);
+                                    },
+                                    child: imageUrl != null
+                                        ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                        : Icon(Icons.image, color: Colors.lightGreen[900]),
+                                  ),
                                   title: Text(
                                     entry.key,
                                     style: TextStyle(
@@ -155,9 +182,14 @@ class _DetectionPageState extends State<DetectionPage> {
                             final result = detectionData['result'] ?? 'Unknown';
 
                             return ListTile(
-                              leading: imageUrl.isNotEmpty
-                                  ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
-                                  : Icon(Icons.image, color: Colors.grey),
+                              leading: GestureDetector(
+                                onTap: () {
+                                  _showImageDialog(imageUrl);
+                                },
+                                child: imageUrl != null
+                                    ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                    : Icon(Icons.image, color: Colors.lightGreen[900]),
+                              ),
                               title: Text(
                                 cropName,
                                 style: TextStyle(

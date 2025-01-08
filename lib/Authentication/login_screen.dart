@@ -1,3 +1,4 @@
+import 'package:agripediav3/Authentication/forgot_password.dart';
 import 'package:agripediav3/Authentication/signup_screen.dart';
 import 'package:agripediav3/Components/my_button.dart';
 import 'package:agripediav3/Components/my_text_field.dart';
@@ -92,10 +93,20 @@ class LoginScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        "Forgot password?",
-                        style: TextStyle(
-                          color: Colors.grey[700],
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ForgotPassword(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Forgot password?",
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                          ),
                         ),
                       ),
                     ],

@@ -56,7 +56,7 @@ class _CropDashboardState extends State<CropDashboard> {
 
   void fetchLiveData() async {
     try {
-      // Fetch the hardwareID asynchronously
+      // Fetch the hardwareID from the user's crops collection
       DocumentSnapshot cropDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -64,86 +64,71 @@ class _CropDashboardState extends State<CropDashboard> {
           .doc(widget.cropId)
           .get();
 
-      String hardwareID = cropDoc['hardwareID']; // Get the hardwareID from the crop document
+      String hardwareID = cropDoc['hardwareID']; // Get the hardwareID
       hId = hardwareID;
 
-      String latestDateToday = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
-      // Fetch the latest date document from the cropData collection using document ID
+      // Query to get the latest document from the hardware collection
       QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
           .collection(hardwareID)
-          .orderBy('createdAt', descending: true)
-          .limit(1)
+          .orderBy('createdAt', descending: true) // Order by createdAt in descending order
+          .limit(1) // Get only the latest document
           .get();
 
       if (dateSnapshot.docs.isEmpty) {
-        print('No date data found');
+        print('No live data found');
         return;
       }
 
-      // Get the latest date document ID
-      String latestDate = dateSnapshot.docs.first.id; // This is the document ID representing the date (e.g., 2024-12-20)
-      date = latestDate;
-      print("latest date (after date retrieve): $date");
+      // Get the latest document
+      DocumentSnapshot latestDateDoc = dateSnapshot.docs.first;
 
-      // Now, query the available hour collections for the latest hour dynamically
-      // QuerySnapshot hourSnapshot = await FirebaseFirestore.instance
-      //     .collection('hardwares')
-      //     .doc(hardwareID)
-      //     .collection(latestDate) // Dynamic date collection
-      //     .limit(1)
-      //     .get();
-      //
-      // if (hourSnapshot.docs.isEmpty) {
-      //   print('No hour data found');
-      //   return;
-      // }
+      // Extract the document ID (e.g., "2025-01-06-01:03")
+      String documentID = latestDateDoc.id;
 
-      // Get the latest hour subcollection document
-      DocumentSnapshot latestDateDoc = dateSnapshot.docs.first; // The document containing live data
-      // hour = latestHourDoc.id;
+      // Split the document ID to extract date and hour
+      List<String> parts = documentID.split('-');
+      String extractedDate = "${parts[0]}-${parts[1]}-${parts[2]}"; // "2025-01-06"
+      String extractedHour = parts[3]; // "01:03"
 
-      // Extract the live data from the document
+      // Extract live data from the document
       Map<String, dynamic> liveData = latestDateDoc.data() as Map<String, dynamic>;
-      // Parse soil moisture values as numbers, calculate the average, and store as string
       double soilMoisture1 = double.tryParse(liveData['soilMoisture1'].toString()) ?? 0.0;
       double soilMoisture2 = double.tryParse(liveData['soilMoisture2'].toString()) ?? 0.0;
       double soilMoisture3 = double.tryParse(liveData['soilMoisture3'].toString()) ?? 0.0;
 
       double soilAverage = (soilMoisture1 + soilMoisture2 + soilMoisture3) / 3;
 
+      // Update the state with the fetched data
       setState(() {
-        soil1 = soilMoisture1.toStringAsFixed(2); // Keep two decimal places
+        date = extractedDate; // Update date
+        hour = extractedHour; // Update hour
+        soil1 = soilMoisture1.toStringAsFixed(2);
         soil2 = soilMoisture2.toStringAsFixed(2);
         soil3 = soilMoisture3.toStringAsFixed(2);
-        soilFinal = soilAverage.toStringAsFixed(2); // Save average as string
+        soilFinal = soilAverage.toStringAsFixed(2);
         temperature = liveData['temperature'].toString();
         light = liveData['lightIntensity'].toString();
         humidity = liveData['humidity'].toString();
       });
 
-      setState(() {}); // Rebuild the widget after setting the live data
-
+      print('Date: $date');
+      print('Hour: $hour');
       print('Soil: $soilFinal');
       print('Temperature: $temperature');
       print('Light: $light');
       print('Humidity: $humidity');
-      print("Date: $date");
-      print("Hour: $hour");
-      print("Hardware ID: $hId");
-
-
     } catch (e) {
       print('Error fetching live data: $e');
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightGreen[50],
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen[50],
+        backgroundColor: Colors.grey[200],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -155,7 +140,7 @@ class _CropDashboardState extends State<CropDashboard> {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          color: Colors.lightGreen[50],
+          color: Colors.grey[200],
           padding: const EdgeInsets.all(5),
           child: Column(
             children: [
@@ -182,6 +167,14 @@ class _CropDashboardState extends State<CropDashboard> {
                     ),
                     Text(
                       formattedDate,
+                      style: const TextStyle(
+                        color: Color.fromRGBO(38, 50, 56, 1),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      hour.isNotEmpty ? hour : 'Loading...',
                       style: const TextStyle(
                         color: Color.fromRGBO(38, 50, 56, 1),
                         fontWeight: FontWeight.w400,
@@ -251,7 +244,7 @@ class _CropDashboardState extends State<CropDashboard> {
     return Container(
       height: 185,
       width: 165,
-      color: const Color.fromRGBO(246, 245, 245, 1),
+      color: Colors.grey[200],
       child: Stack(
         children: [
           Positioned(

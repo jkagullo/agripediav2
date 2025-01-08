@@ -40,6 +40,14 @@ class _SummaryWidgetState extends State<SummaryWidget> {
             height: 200,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  spreadRadius: 1,
+                  blurRadius: 1,
+                  offset: const Offset(0,3),
+                ),
+              ],
             ),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -53,12 +61,8 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                     height: 200,
                     width: 320,
                     decoration: BoxDecoration(
-                      color: Colors.lightGreen[600],
+                      color: Colors.lightGreen[50],
                       borderRadius: BorderRadius.circular(20.0),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1,
-                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -72,13 +76,14 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                               Image.asset(
                                 'assets/images/crop_icon.png',
                                 height: 30,
+                                color: Colors.lightGreen[900],
                               ),
                               Text(
                                 cropName,
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Colors.lightGreen[900],
                                 ),
                               ),
                               Text(
@@ -86,7 +91,7 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
-                                  color: Colors.white,
+                                  color: Colors.lightGreen[900],
                                 ),
                               ),
                               OutlinedButton(
@@ -99,16 +104,21 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                                   );
                                 },
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.lightGreen[600],
-                                  side: BorderSide(color: Colors.white),
+                                  foregroundColor: Colors.lightGreen[900],
+                                  side: BorderSide(
+                                    color: Colors.lightGreen[900]!,
+                                    width: 1,
+                                  ),
                                   padding: EdgeInsets.symmetric(horizontal: 30),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
                                 ),
                                 child: Text(
                                   'Analysis',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.white,
+                                    color: Colors.lightGreen[900],
                                   ),
                                 ),
                               ),
@@ -122,10 +132,10 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                             height: 190,
                             width: 170,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(15.0),
                               child: imageUrl != null
                                   ? Image.network(
                                 imageUrl,
