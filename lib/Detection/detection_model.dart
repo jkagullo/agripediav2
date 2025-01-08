@@ -106,9 +106,11 @@ class _DetectionPageState extends State<DetectionScreen> {
       });
 
       final firestore = FirebaseFirestore.instance;
-      final timestamp = DateTime.now();
+      final timestamp = DateTime.now().toUtc();
       final date = DateFormat('yyyy-MM-dd').format(timestamp);  // This will format as '2024-01-07'
       final time = DateFormat('HH:mm').format(timestamp); // This will format time as '14:30'
+      print("date detection: $date");
+      print("time detection: $time");
 
       final docRef = firestore
           .collection('Detection')

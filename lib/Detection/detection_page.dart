@@ -138,7 +138,9 @@ class _DetectionPageState extends State<DetectionPage> {
                                     ),
                                   ),
                                   trailing: Text(
-                                    detectionDoc.id,
+                                    detectionData['createdAt'] != null
+                                        ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate())
+                                        : 'N/A',
                                     style: TextStyle(
                                       color: Colors.lightGreen[900],
                                       fontSize: 14,
@@ -172,7 +174,9 @@ class _DetectionPageState extends State<DetectionPage> {
                                 ),
                               ),
                               trailing: Text(
-                                detectionDoc.id,
+                                detectionData['createdAt'] != null
+                                    ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate())
+                                    : 'N/A',
                                 style: TextStyle(
                                   color: Colors.lightGreen[900],
                                   fontSize: 14,
