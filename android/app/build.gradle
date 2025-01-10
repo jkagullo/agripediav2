@@ -12,12 +12,17 @@ android {
     compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
+    defaultConfig {
+        multiDexEnabled true
+    }
+
     aaptOptions {
         noCompress 'tflite'
         noCompress 'lite'
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -62,4 +67,6 @@ dependencies {
 
     // Add more Firebase products as per your needs
     // Available Firebase libraries: https://firebase.google.com/docs/android/setup#available-libraries
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 }

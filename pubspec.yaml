@@ -55,6 +55,8 @@ dependencies:
   path_provider: ^2.0.15
   carousel_slider: ^5.0.0
   dots_indicator: ^3.0.0
+  flutter_local_notifications: ^18.0.1
+  workmanager: ^0.5.2
 
 
 dev_dependencies:
