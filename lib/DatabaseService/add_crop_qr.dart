@@ -19,6 +19,9 @@ class _AddCropQRState extends State<AddCropQR> {
   final ImagePicker _picker = ImagePicker();
   final TextEditingController cropNameController = TextEditingController();
   DateTime? plantingDate;
+  String? selectedCropType;
+
+  final List<String> cropTypes = ['Pepper', 'Tomato', 'Potato', 'Cucumber'];
 
   @override
   void dispose() {
@@ -57,51 +60,94 @@ class _AddCropQRState extends State<AddCropQR> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text("Add Crop Details"),
+          title: Text(
+            'Add Crop Manually',
+            style: TextStyle(
+              color: Colors.lightGreen[900]!,
+              fontSize: 22,
+            ),
+          ),
           content: StatefulBuilder(
             builder: (dialogContext, setDialogState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  selectedImage != null
-                      ? Image.file(selectedImage!, height: 100)
-                      : TextButton.icon(
-                    onPressed: () async {
-                      await _pickImage();
-                      if (mounted) setDialogState(() {});
-                    },
-                    icon: const Icon(Icons.image),
-                    label: const Text('Select Image'),
-                  ),
-                  const SizedBox(height: 15),
-                  TextField(
-                    controller: cropNameController,
-                    decoration: const InputDecoration(labelText: "Crop Name"),
-                  ),
-                  const SizedBox(height: 15),
-                  ListTile(
-                    title: Text(plantingDate == null
-                        ? "Select Planting Date"
-                        : "Planting Date: ${plantingDate!.toLocal()}"),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () async {
-                      DateTime? selectedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                      );
-                      if (selectedDate != null && mounted) {
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    selectedImage != null
+                        ? Image.file(selectedImage!, height: 100)
+                        : TextButton.icon(
+                      onPressed: () async {
+                        await _pickImage();
+                        if (mounted) setDialogState(() {});
+                      },
+                      icon: const Icon(Icons.image),
+                      label: Text(
+                        'Select Image',
+                        style: TextStyle(color: Colors.lightGreen[900]),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    TextField(
+                      controller: cropNameController,
+                      decoration: InputDecoration(labelText: "Crop Name", labelStyle: TextStyle(color: Colors.lightGreen[900]!),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.lightGreen[900]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.lightGreen[900]!),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    DropdownButtonFormField<String>(
+                      value: selectedCropType,
+                      items: cropTypes
+                          .map((type) => DropdownMenuItem(
+                        value: type,
+                        child: Text(type),
+                      ))
+                          .toList(),
+                      decoration: InputDecoration(
+                        labelText: 'Select Crop Type',
+                        labelStyle: TextStyle(color: Colors.lightGreen[900]),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.lightGreen[900]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.lightGreen[900]!),
+                        ),
+                      ),
+                      onChanged: (value) {
                         setState(() {
-                          plantingDate = selectedDate;
+                          selectedCropType = value;
                         });
-                        setDialogState(() {});
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  Text("Hardware ID: $scannedHardwareID"),
-                ],
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    ListTile(
+                      title: Text(plantingDate == null
+                          ? "Select Planting Date"
+                          : "Planting Date: ${plantingDate!.toLocal()}"),
+                      trailing: const Icon(Icons.calendar_today),
+                      onTap: () async {
+                        DateTime? selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now(),
+                        );
+                        if (selectedDate != null && mounted) {
+                          setState(() {
+                            plantingDate = selectedDate;
+                          });
+                          setDialogState(() {});
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    Text("Hardware ID: $scannedHardwareID"),
+                  ],
+                ),
               );
             },
           ),
@@ -158,6 +204,7 @@ class _AddCropQRState extends State<AddCropQR> {
         'cropName': cropNameController.text,
         'plantingDate': plantingDate,
         'hardwareID': scannedHardwareID,
+        'cropType': selectedCropType,
         'imageUrl': imageUrl ?? '',
       });
 
