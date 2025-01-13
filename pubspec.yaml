@@ -109,6 +109,13 @@ flutter:
     - assets/images/Cropedia-Tomato3.png
     - assets/lottie/catto.json
     - assets/lottie/cattu.json
+    - assets/lottie/location2.json
+    - assets/images/potato1.jpg
+    - assets/images/potato2.jpg
+    - assets/images/potato3.jpg
+    - assets/images/cucumber1.jpg
+    - assets/images/cucumber2.jpg
+    - assets/images/cucumber3.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:

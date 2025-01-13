@@ -18,27 +18,54 @@ class _CropediaState extends State<Cropedia> {
     super.initState();
   }
 
-  final List<String> images = [
+  final List<String> tomatoImg = [ // tomato
     'assets/images/Cropedia-Tomato1.png',
     'assets/images/Cropedia-Tomato2.png',
     'assets/images/Cropedia-Tomato3.png',
   ];
 
-  final List<String> pictures = [
+  final List<String> pepperImg = [ // pepper
     'assets/images/Cropedia-Sili1.png',
     'assets/images/Cropedia-Sili2.png',
     'assets/images/Cropedia-Sili3.png',
   ];
 
-  List<Widget> reshapeImages(){
-    return pictures.map((element)=> ClipRRect(
+  final List<String> potatoImg = [ // potato
+    'assets/images/potato1.jpg',
+    'assets/images/potato2.jpg',
+    'assets/images/potato3.jpg',
+  ];
+
+  final List<String> cucumberImg = [ // cucumber
+    'assets/images/cucumber1.jpg',
+    'assets/images/cucumber2.jpg',
+    'assets/images/cucumber3.jpg',
+  ];
+
+
+  List<Widget> reshapeTomato(){
+    return tomatoImg.map((element)=> ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.asset(element, width: 345, fit: BoxFit.cover,),
     )).toList();
   }
 
-  List<Widget> generateImages(){
-    return images.map((element)=> ClipRRect(
+  List<Widget> reshapePepper(){
+    return pepperImg.map((element)=> ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Image.asset(element, width: 345, fit: BoxFit.cover,),
+    )).toList();
+  }
+
+  List<Widget> reshapePotato(){
+    return potatoImg.map((element)=> ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Image.asset(element, width: 345, fit: BoxFit.cover,),
+    )).toList();
+  }
+
+  List<Widget> reshapeCucumber(){
+    return cucumberImg.map((element)=> ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.asset(element, width: 345, fit: BoxFit.cover,),
     )).toList();
@@ -47,7 +74,7 @@ class _CropediaState extends State<Cropedia> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Number of tabs
+      length: 4, // Number of tabs
       child: Scaffold(
         backgroundColor: Colors.lightGreen[50],
         appBar: AppBar(
@@ -94,7 +121,9 @@ class _CropediaState extends State<Cropedia> {
                             unselectedLabelColor: const Color.fromRGBO(69, 90, 100, 1), // Corrected color definition
                             tabs: const [
                               Tab(text: 'Tomato'),
-                              Tab(text: 'Siling Labuyo'),
+                              Tab(text: 'Pepper'),
+                              Tab(text: 'Potato'),
+                              Tab(text: 'Cucumber'),
                             ],
                             labelPadding: const EdgeInsets.symmetric(horizontal: 20),
                           ),
@@ -121,7 +150,7 @@ class _CropediaState extends State<Cropedia> {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20)
                             ),
-                            child: CarouselSlider(items: generateImages(),
+                            child: CarouselSlider(items: reshapeTomato(),
                               carouselController: controller,
                               options: CarouselOptions(
                                 padEnds: true,
@@ -141,7 +170,7 @@ class _CropediaState extends State<Cropedia> {
                           Positioned(
                             bottom: 8.0,
                             child: DotsIndicator(
-                              dotsCount: images.length,
+                              dotsCount: tomatoImg.length,
                               position: currentIndex,
                               onTap: (index) {
                                 controller.animateToPage(index);
@@ -452,7 +481,7 @@ class _CropediaState extends State<Cropedia> {
               ),
             ),
 
-            // SILING LABUYO
+            // SILING LABUYO Tab #2
             SingleChildScrollView(
               child:  Column(
                   children: [
@@ -467,7 +496,7 @@ class _CropediaState extends State<Cropedia> {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20)
                             ),
-                            child: CarouselSlider(items: reshapeImages(),
+                            child: CarouselSlider(items: reshapePepper(),
                               carouselController: controller,
                               options: CarouselOptions(
                                 padEnds: true,
@@ -487,7 +516,7 @@ class _CropediaState extends State<Cropedia> {
                           Positioned(
                             bottom: 8.0,
                             child: DotsIndicator(
-                              dotsCount: pictures.length,
+                              dotsCount: pepperImg.length,
                               position: currentIndex,
                               onTap: (index) {
                                 controller.animateToPage(index);
@@ -768,6 +797,692 @@ class _CropediaState extends State<Cropedia> {
                     ),
                     ),
                   ]
+              ),
+            ),
+            SingleChildScrollView( // Tab #3
+              child:  Column(
+                children: [
+                  const SizedBox(height: 20,),
+                  Stack(
+                      alignment: AlignmentDirectional.bottomCenter,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.zero,
+                          height: 150, width: 345,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)
+                          ),
+                          child: CarouselSlider(items: reshapePotato(),
+                            carouselController: controller,
+                            options: CarouselOptions(
+                              padEnds: true,
+                              enlargeCenterPage: false,
+                              autoPlay: true,
+                              //  aspectRatio: 0.85,
+                              viewportFraction: 1,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  currentIndex = index;
+                                });
+                              },
+                            ),),
+
+                        ),
+
+                        Positioned(
+                          bottom: 8.0,
+                          child: DotsIndicator(
+                            dotsCount: tomatoImg.length,
+                            position: currentIndex,
+                            onTap: (index) {
+                              controller.animateToPage(index);
+                            },
+                            decorator: DotsDecorator(
+                              color:  const Color.fromRGBO(255, 255, 255, 59),
+                              activeColor:  const Color.fromRGBO(255, 255, 255, 59),
+                              size: const Size.square(12.0),
+                              activeSize: const Size(24.0, 12.0),
+                              activeShape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
+                          ),),]
+                  ),
+
+                  const SizedBox(height:20),
+
+                  Container(
+                    padding: const EdgeInsets.only(left: 35, right: 35,),
+                    height: 1000,
+                    width: double.infinity,
+                    color: const Color.fromRGBO(0, 105, 46, 1),
+                    child:  SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                          children: [
+                            const SizedBox(height: 20,),
+
+                            //ABOUT
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('About',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+                            const SizedBox(height: 4,),
+                            const Text('The potato (Solanum tuberosum) belongs to the solanaceae family of flowering plants. It originated and was first domesticated in the Andesmountains of South America. The potato is the third most important food crop in the world after rice and wheat in terms of human consumption. More than a billion people worldwide eat potato, and global total crop production exceeds 300 million metric tons.',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white
+                                )),
+
+                            const SizedBox(height: 20,),
+
+                            //WHERE TO PLANT
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('Where',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+                            const SizedBox(height: 4,),
+                            const Text('Tomatoes thrive in rich, free-draining soil, so add plenty of garden compost before planting. Choose your warmest, sunniest spot, sheltered from the wind. Potatoes are traditionally grown in rows on ridges, but they can also be grown in potato bags or containers.',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white
+                                )),
+                            const SizedBox(height: 20,),
+
+                            //WHEN TO PLANT
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('When',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+                            const SizedBox(height: 4,),
+                            const Text('In the Philippines, the optimal time to plant potatoes varies by region. Highland areas like Benguet and Bukidnon experience the most favorable conditions during March-April and October-November. In contrast, lowland regions generally see the best planting window from November to mid-December. These periods typically offer the ideal temperature and moisture levels for successful potato growth, as they prefer cool temperatures and adequate moisture for tuber development. However, it is crucial to consult with local agricultural extension offices or experienced potato farmers for the most accurate planting advice tailored to specific locations and potato varieties.',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white
+                                )),
+
+                            const SizedBox(height: 20,),
+                            //HOW
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('How',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+
+                            const SizedBox(height: 4,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '1. Prepare the Soil: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Prepare a small, shallow trench in well-tilled soil',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '2. Prepare the Seed: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Cut seed potatoes into pieces, each with at least 2 "eyes" (growth buds). Allow the cut pieces to dry for a few hours to prevent rot.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '3. Plant the Seed:  ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Dig trenches 4-6 inches deep. Place the seed potato pieces 12-18 inches apart in the trenches, with the "eyes" facing upwards. Gently cover the pieces with soil.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '4. Hilling: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'As the potato plants emerge and grow, gradually add more soil to the sides of the plants (hilling). This encourages the formation of more tubers.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '5. Water Regularly:  ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Water the plants regularly, especially during dry periods. Over-watering can lead to root rot.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '6. Weed Control ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Regularly remove weeds that compete with the potato plants for water and nutrients.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '7. Harvest: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: "Once the potato plant foliage begins to wither and die back, it's time to harvest the potatoes. Gently dig around the plants to avoid damaging the tubers.",
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+                          ]
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SingleChildScrollView( // Tab #4
+              child:  Column(
+                children: [
+                  const SizedBox(height: 20,),
+                  Stack(
+                      alignment: AlignmentDirectional.bottomCenter,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.zero,
+                          height: 150, width: 345,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)
+                          ),
+                          child: CarouselSlider(items: reshapeCucumber(),
+                            carouselController: controller,
+                            options: CarouselOptions(
+                              padEnds: true,
+                              enlargeCenterPage: false,
+                              autoPlay: true,
+                              //  aspectRatio: 0.85,
+                              viewportFraction: 1,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  currentIndex = index;
+                                });
+                              },
+                            ),),
+
+                        ),
+
+                        Positioned(
+                          bottom: 8.0,
+                          child: DotsIndicator(
+                            dotsCount: tomatoImg.length,
+                            position: currentIndex,
+                            onTap: (index) {
+                              controller.animateToPage(index);
+                            },
+                            decorator: DotsDecorator(
+                              color:  const Color.fromRGBO(255, 255, 255, 59),
+                              activeColor:  const Color.fromRGBO(255, 255, 255, 59),
+                              size: const Size.square(12.0),
+                              activeSize: const Size(24.0, 12.0),
+                              activeShape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
+                          ),),]
+                  ),
+
+                  const SizedBox(height:20),
+
+                  Container(
+                    padding: const EdgeInsets.only(left: 35, right: 35,),
+                    height: 1000,
+                    width: double.infinity,
+                    color: const Color.fromRGBO(0, 105, 46, 1),
+                    child:  SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                          children: [
+                            const SizedBox(height: 20,),
+
+                            //ABOUT
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('About',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+                            const SizedBox(height: 4,),
+                            const Text("Cucumber, (Cucumis sativus), creeping plant of the gourd family (Cucurbitaceae), widely cultivated for its edible fruit. The nutritional value of the cucumber is low, but its delicate flavour makes it popular for salads and relishes. Small fruits are often pickled. The cucumber can be grown in frames or on trellises in greenhouses in cool climates and is cultivated as a field crop and in home gardens in warmer areas.",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white
+                                )),
+
+                            const SizedBox(height: 20,),
+
+                            //WHERE TO PLANT
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('Where',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+                            const SizedBox(height: 4,),
+                            const Text("Cucumbers thrive in sunny locations, making a south-facing window the ideal spot for indoor cultivation. This ensures the plants receive ample direct sunlight, which is crucial for their growth and fruit production. However, it's essential to avoid placing them near drafty windows or air conditioning vents, as cucumbers prefer warm temperatures. Given their vining nature, sufficient space is necessary to accommodate their growth. Utilizing trellises or cages can help guide their vertical growth and optimize space utilization. Furthermore, employing well-draining potting mix is crucial to prevent root rot, a common issue in container-grown plants. While indoor cucumber cultivation is feasible, it's important to acknowledge that yields may be lower compared to outdoor cultivation.",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white
+                                )),
+                            const SizedBox(height: 20,),
+
+                            //WHEN TO PLANT
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('When',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+                            const SizedBox(height: 4,),
+                            const Text("In the Philippines, cucumbers can be planted year-round due to the warm climate. However, planting during the warmest months, typically from March to May and September to November, generally provides the most favorable conditions for optimal growth and yield. While cucumbers thrive in warm weather, it's advisable to avoid planting during the hottest periods of the year to prevent heat stress on the plants. To ensure a continuous harvest, gardeners can employ the technique of successive plantings, sowing small batches of seeds every 2-3 weeks throughout the year. Furthermore, selecting cucumber varieties that are well-adapted to the local climate and planting season is crucial for successful cultivation.",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white
+                                )),
+
+                            const SizedBox(height: 20,),
+                            //HOW
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('How',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'lato',
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),),
+                            ),
+
+                            const SizedBox(height: 4,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '1. Choose the Right Spot: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: "Cucumbers need at least 6 hours of direct sunlight per day. Select a location with well-drained soil. Avoid areas that tend to be soggy.",
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '2. Prepare the Soil: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: "Till the soil to a depth of about 8 inches. Add compost or well-rotted manure to improve soil fertility and drainage.",
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '3. Plant the Seeds:  ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Dig holes for your tomato plants that are deep enough to bury them up to their first set of leaves. This encourages the development of a strong root system.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '4. Water Regularly: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: "Keep the soil consistently moist but not waterlogged. Water deeply and infrequently rather than shallowly and frequently.",
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '5. Provide Support:  ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: "As the plants grow, provide support with a trellis or cage to help them climb and prevent them from sprawling on the ground.",
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '6. Watering and Mulching: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: ' Water the newly planted seedlings thoroughly to help them establish their roots. Apply a layer of organic mulch, such as straw or shredded leaves, around the plants to retain moisture and suppress weeds.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+
+                            RichText(
+                              textAlign: TextAlign.left,
+                              text:  const TextSpan(
+                                text: '7. Maintenance: ',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'As the plants grow, continue to water them regularly, especially during dry periods. Monitor for signs of pests or diseases and take appropriate action if needed. Fertilize the plants periodically according to the recommendations for your specific tomato variety.',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 8,),
+                          ]
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

@@ -121,7 +121,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
               flex: 1,
               child: Row(
                 children: [
-                  Lottie.asset('assets/lottie/location.json', height: 45,),
+                  Lottie.asset('assets/lottie/location2.json', height: 45,),
                   Expanded(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
