@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 class DetectionPage extends StatefulWidget {
   const DetectionPage({super.key});
@@ -77,7 +78,24 @@ class _DetectionPageState extends State<DetectionPage> {
                 return const Center(child: CircularProgressIndicator());
               }
               if (!cropSnapshot.hasData || cropSnapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('No crops available.'));
+                return Center(
+                  child: Column(
+                    children: [
+                      LottieBuilder.asset(
+                        'assets/lottie/cattu.json',
+                        height: 150,
+                        width: 150,
+                      ),
+                      Text(
+                        "No crops found, add a crop to view crop detection history!",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.lightGreen[900],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
 
               final crops = cropSnapshot.data!.docs;

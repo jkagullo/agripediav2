@@ -35,8 +35,8 @@ class _MyHomePageState extends State<MyHomePage> {
     AnalysisSelect(),
     DashboardSelect(),
     DetectionPage(),
-    SettingsPage(),
     Cropedia(),
+    SettingsPage(),
   ];
 
   void onItemTapped(int index) {
@@ -76,39 +76,42 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         return Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Select Crop for Disease Detection",
-                style: TextStyle(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Select Crop for Disease Detection",
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.lightGreen[900],
-                ),
-              ),
-              const SizedBox(height: 10),
-              ...crops.map(
-                    (crop) => ListTile(
-                  leading: crop['imageUrl'] != null
-                      ? Image.network(crop['imageUrl'], height: 50, width: 50)
-                      : Icon(Icons.agriculture, color: Colors.lightGreen[900]),
-                  title: Text(
-                      crop['cropName'],
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.lightGreen[900],
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
-                  subtitle: Text("Hardware ID: ${crop['hardwareID']}", style: TextStyle(color: Colors.lightGreen[900]),),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _startDetection(crop, detectionMethod);
-                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                ...crops.map(
+                      (crop) => ListTile(
+                    leading: crop['imageUrl'] != null
+                        ? Image.network(crop['imageUrl'], height: 50, width: 50)
+                        : Icon(Icons.agriculture, color: Colors.lightGreen[900]),
+                    title: Text(
+                      crop['cropName'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.lightGreen[900],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text("Hardware ID: ${crop['hardwareID']}", style: TextStyle(color: Colors.lightGreen[900]),),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _startDetection(crop, detectionMethod);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -200,12 +203,12 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Detection',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-          const BottomNavigationBarItem(
             icon: Icon(Icons.agriculture),
             label: 'Cropedia',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
       ),

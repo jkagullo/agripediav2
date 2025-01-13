@@ -32,7 +32,7 @@ class _TasksWidgetState extends State<TasksWidget> {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("No crops available."));
+            return const Center(child: Text(""));
           }
 
           final crops = snapshot.data!;

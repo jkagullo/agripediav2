@@ -47,7 +47,6 @@ class _AddCropDialogState extends State<AddCropDialog> {
       print("Hardware snapshot count: ${hardwareSnapshot.docs.length}");
       hardwareSnapshot.docs.forEach((doc) {
         print("Hardware data: ${doc.data()}");
-
       });
 
       if (hardwareSnapshot.docs.isNotEmpty) {

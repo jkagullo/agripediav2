@@ -2,6 +2,7 @@ import 'package:agripediav3/Analysis/analysis_page.dart';
 import 'package:agripediav3/Analysis/analysis_select.dart';
 import 'package:flutter/material.dart';
 import 'package:agripediav3/DatabaseService/crop_summary_db.dart';
+import 'package:lottie/lottie.dart';
 
 class SummaryWidget extends StatefulWidget {
   const SummaryWidget({super.key});
@@ -29,7 +30,24 @@ class _SummaryWidgetState extends State<SummaryWidget> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error loading crop data'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No crops found'));
+          return Center(
+            child: Column(
+              children: [
+                LottieBuilder.asset(
+                  'assets/lottie/cattu.json',
+                  height: 150,
+                  width: 150,
+                ),
+                Text(
+                    "No crops found, add a crop to get started!",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.lightGreen[900],
+                    ),
+                ),
+              ],
+            ),
+          );
         }
 
         final cropData = snapshot.data!;

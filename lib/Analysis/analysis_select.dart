@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:agripediav3/Analysis/analysis_page.dart';
 import 'package:agripediav3/Analysis/analysis_db.dart';
+import 'package:lottie/lottie.dart';
 
 class AnalysisSelect extends StatefulWidget {
   const AnalysisSelect({super.key});
@@ -45,15 +46,18 @@ class _AnalysisSelectState extends State<AnalysisSelect> {
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('No crops available'),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigate to crop addition screen
-                      },
-                      child: Text('Add Crop'),
+                    LottieBuilder.asset(
+                      'assets/lottie/cattu.json',
+                      height: 150,
+                      width: 150,
+                    ),
+                    Text(
+                      "No crops found, add a crop to view crop analysis!",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.lightGreen[900],
+                      ),
                     ),
                   ],
                 ),

@@ -96,21 +96,20 @@ class _AnalysisPageState extends State<AnalysisPage> {
       case 'Daily':
         spots = List.generate(dateDocuments.length, (index) {
           final data = dateDocuments[index];
-          return FlSpot(
-            index.toDouble(),
-            data['daily_overall_status'] ?? 0.0,
-          );
+          double value = (data['daily_overall_status'] ?? 0.0).toDouble();
+          return FlSpot(index.toDouble(), value >= 1.0 ? value : 1.0);
         });
         break;
 
       case 'Weekly':
         for (int i = 0; i < dateDocuments.length; i += 7) {
-          final weekDocs = dateDocuments.sublist(i, i + 7 > dateDocuments.length ? dateDocuments.length : i + 7);
+          final weekDocs = dateDocuments.sublist(
+            i,
+            i + 7 > dateDocuments.length ? dateDocuments.length : i + 7,
+          );
           final lastDoc = weekDocs.last;
-          spots.add(FlSpot(
-            (i / 7).toDouble(),
-            lastDoc['weekly_overall_status'] ?? _calculateAverage(weekDocs, 'daily_overall_status'),
-          ));
+          double weeklyStatus = (lastDoc['weekly_overall_status'] ?? _calculateAverage(weekDocs, 'daily_overall_status')).toDouble();
+          spots.add(FlSpot((i / 7).toDouble(), weeklyStatus >= 1.0 ? weeklyStatus : 1.0));
         }
         break;
 
@@ -122,19 +121,20 @@ class _AnalysisPageState extends State<AnalysisPage> {
           if (!monthlyData.containsKey(monthKey)) {
             monthlyData[monthKey] = [];
           }
-          monthlyData[monthKey]!.add(doc['daily_overall_status'] ?? 0.0);
+          monthlyData[monthKey]!.add((doc['daily_overall_status'] ?? 0.0).toDouble());
         }
 
         int index = 0;
         monthlyData.forEach((key, values) {
           double average = values.reduce((a, b) => a + b) / values.length;
-          spots.add(FlSpot(index.toDouble(), average));
+          spots.add(FlSpot(index.toDouble(), average >= 1.0 ? average : 1.0));
           index++;
         });
         break;
     }
     return spots;
   }
+
 
   double _calculateAverage(List<Map<String, dynamic>> docs, String field) {
     double sum = 0;
@@ -145,24 +145,29 @@ class _AnalysisPageState extends State<AnalysisPage> {
         count++;
       }
     }
-    return count > 0 ? sum / count : 0.0;
+    return count > 0 ? sum / count : 1.0; // Default to 1.0 if no valid data
   }
 
   void onSpotSelected(int index) {
     if (selectedChartType == 'Weekly') {
-      // Map the index back to the last document of that week
+      // Map the index to the correct week
       int start = index * 7;
       int end = start + 7 > dateDocuments.length ? dateDocuments.length : start + 7;
-      setState(() {
-        selectedDateData = dateDocuments[end - 1];
-      });
+      if (start < dateDocuments.length) {
+        setState(() {
+          selectedDateData = dateDocuments[end - 1];
+        });
+      }
     } else {
-      setState(() {
-        selectedDateData = dateDocuments[index];
-        print("selected date data: $selectedDateData");
-      });
+      if (index < dateDocuments.length) {
+        setState(() {
+          selectedDateData = dateDocuments[index];
+          print("Selected date data: $selectedDateData");
+        });
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

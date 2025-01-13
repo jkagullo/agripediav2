@@ -29,7 +29,7 @@ class _AddCropQRState extends State<AddCropQR> {
     super.dispose();
   }
 
-  void _onQRViewCreated(BarcodeCapture capture) async {
+  Future<void> _onQRViewCreated(BarcodeCapture capture) async {
     final List<Barcode> barcodes = capture.barcodes;
     if (barcodes.isNotEmpty) {
       final scannedValue = barcodes.first.rawValue;
@@ -37,9 +37,56 @@ class _AddCropQRState extends State<AddCropQR> {
         setState(() {
           scannedHardwareID = scannedValue;
         });
-        await Future.delayed(Duration(milliseconds: 100)); // Ensure navigation timing
-        if (mounted) {
-          _showCropDialog();
+
+        // Check if hardwareID already exists for the current user
+        final user = FirebaseAuth.instance.currentUser;
+        if (user == null) return;
+
+        try {
+          // Check current user's crops
+          final userCropsSnapshot = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('crops')
+              .where('hardwareID', isEqualTo: scannedHardwareID)
+              .get();
+
+          if (userCropsSnapshot.docs.isNotEmpty) {
+            // HardwareID already exists for this user
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("This hardware ID is already associated with your crops.")),
+            );
+            return;
+          }
+
+          // Check if hardwareID exists for other users
+          final hardwareSnapshot = await FirebaseFirestore.instance
+              .collectionGroup('crops')
+              .where('hardwareID', isEqualTo: scannedHardwareID)
+              .get();
+
+          if (hardwareSnapshot.docs.isNotEmpty) {
+            // Autofill crop type from another user's data
+            final cropData = hardwareSnapshot.docs.first.data();
+            setState(() {
+              selectedCropType = cropData['cropType'] as String?;
+            });
+          } else {
+            // No matching hardwareID found, let user select crop type
+            setState(() {
+              selectedCropType = null;
+            });
+          }
+
+          await Future.delayed(Duration(milliseconds: 100)); // Ensure navigation timing
+          // Show the add crop dialog
+          if (mounted) {
+            Future.delayed(Duration(milliseconds: 100), () => _showCropDialog());
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error fetching data: $e")),
+          );
         }
       }
     }
@@ -55,18 +102,11 @@ class _AddCropQRState extends State<AddCropQR> {
   }
 
   void _showCropDialog() {
-    if (!mounted) return; // Ensure the widget is still active
     showDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(
-            'Add Crop Manually',
-            style: TextStyle(
-              color: Colors.lightGreen[900]!,
-              fontSize: 22,
-            ),
-          ),
+          title: Text('Add Crop', style: TextStyle(color: Colors.lightGreen[900], fontSize: 22)),
           content: StatefulBuilder(
             builder: (dialogContext, setDialogState) {
               return SingleChildScrollView(
@@ -78,18 +118,17 @@ class _AddCropQRState extends State<AddCropQR> {
                         : TextButton.icon(
                       onPressed: () async {
                         await _pickImage();
-                        if (mounted) setDialogState(() {});
+                        setDialogState(() {});
                       },
                       icon: const Icon(Icons.image),
-                      label: Text(
-                        'Select Image',
-                        style: TextStyle(color: Colors.lightGreen[900]),
-                      ),
+                      label: Text('Select Image', style: TextStyle(color: Colors.lightGreen[900])),
                     ),
                     const SizedBox(height: 15),
                     TextField(
                       controller: cropNameController,
-                      decoration: InputDecoration(labelText: "Crop Name", labelStyle: TextStyle(color: Colors.lightGreen[900]!),
+                      decoration: InputDecoration(
+                        labelText: "Crop Name",
+                        labelStyle: TextStyle(color: Colors.lightGreen[900]),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.lightGreen[900]!),
                         ),
@@ -102,18 +141,15 @@ class _AddCropQRState extends State<AddCropQR> {
                     DropdownButtonFormField<String>(
                       value: selectedCropType,
                       items: cropTypes
-                          .map((type) => DropdownMenuItem(
-                        value: type,
-                        child: Text(type),
-                      ))
+                          .map((type) => DropdownMenuItem(value: type, child: Text(type)))
                           .toList(),
                       decoration: InputDecoration(
                         labelText: 'Select Crop Type',
                         labelStyle: TextStyle(color: Colors.lightGreen[900]),
-                        enabledBorder: OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.lightGreen[900]!),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.lightGreen[900]!),
                         ),
                       ),
@@ -125,9 +161,8 @@ class _AddCropQRState extends State<AddCropQR> {
                     ),
                     const SizedBox(height: 15),
                     ListTile(
-                      title: Text(plantingDate == null
-                          ? "Select Planting Date"
-                          : "Planting Date: ${plantingDate!.toLocal()}"),
+                      title: Text(
+                          plantingDate == null ? "Select Planting Date" : "Planting Date: ${plantingDate!.toLocal()}"),
                       trailing: const Icon(Icons.calendar_today),
                       onTap: () async {
                         DateTime? selectedDate = await showDatePicker(
@@ -136,7 +171,7 @@ class _AddCropQRState extends State<AddCropQR> {
                           firstDate: DateTime(2000),
                           lastDate: DateTime.now(),
                         );
-                        if (selectedDate != null && mounted) {
+                        if (selectedDate != null) {
                           setState(() {
                             plantingDate = selectedDate;
                           });
@@ -157,12 +192,12 @@ class _AddCropQRState extends State<AddCropQR> {
               child: const Text("Cancel"),
             ),
             ElevatedButton(
-              onPressed: () async {
-                await _saveCrop();
-                if (mounted) Navigator.of(dialogContext).pop();
+            onPressed: () async {
+            await _saveCrop();
+              if (mounted) Navigator.of(dialogContext).pop();
               },
-              child: const Text("Add"),
-            ),
+            child: const Text("Add"),
+           ),
           ],
         );
       },
@@ -172,7 +207,8 @@ class _AddCropQRState extends State<AddCropQR> {
   Future<void> _saveCrop() async {
     if (scannedHardwareID == null ||
         cropNameController.text.isEmpty ||
-        plantingDate == null) {
+        plantingDate == null ||
+        selectedCropType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill all fields")),
       );
@@ -194,13 +230,12 @@ class _AddCropQRState extends State<AddCropQR> {
         imageUrl = await storageRef.getDownloadURL();
       }
 
-      final cropDoc = FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .collection('crops')
-          .doc();
-
-      await cropDoc.set({
+          .doc()
+          .set({
         'cropName': cropNameController.text,
         'plantingDate': plantingDate,
         'hardwareID': scannedHardwareID,
@@ -212,8 +247,8 @@ class _AddCropQRState extends State<AddCropQR> {
         const SnackBar(content: Text("Crop added successfully")),
       );
 
-      Navigator.of(context).pop(); // Close the dialog
-      Navigator.of(context).pop(); // Navigate back from the scanner screen
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error adding crop: $e")),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:agripediav3/DatabaseService/crop_dashboard_db.dart';
 import 'crop_dashboard.dart';
+import 'package:lottie/lottie.dart';
 
 class DashboardSelect extends StatefulWidget {
   const DashboardSelect({super.key});
@@ -43,7 +44,24 @@ class _DashboardSelectState extends State<DashboardSelect> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error loading crops'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No crops available'));
+              return Center(
+                child: Column(
+                  children: [
+                    LottieBuilder.asset(
+                      'assets/lottie/cattu.json',
+                      height: 150,
+                      width: 150,
+                    ),
+                    Text(
+                      "No crops found, add a crop to view crop dashboard!",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.lightGreen[900],
+                      ),
+                    ),
+                  ],
+                ),
+              );
             } else {
               List<Map<String, dynamic>> crops = snapshot.data!;
               return ListView.builder(

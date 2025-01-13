@@ -51,7 +51,7 @@ class _CropediaState extends State<Cropedia> {
       child: Scaffold(
         backgroundColor: Colors.lightGreen[50],
         appBar: AppBar(
-          toolbarHeight: 115,
+          toolbarHeight: 80,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.lightGreen[100],
           title: const Text(

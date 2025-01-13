@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lottie/lottie.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -187,7 +188,24 @@ class _SettingsPageState extends State<SettingsPage> {
                   return Center(child: CircularProgressIndicator());
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No crops added yet.'));
+                  return Center(
+                    child: Column(
+                      children: [
+                        LottieBuilder.asset(
+                          'assets/lottie/cattu.json',
+                          height: 150,
+                          width: 150,
+                        ),
+                        Text(
+                          "No crops found, add a crop to view crop analysis!",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.lightGreen[900],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 List<QueryDocumentSnapshot> crops = snapshot.data!.docs;
