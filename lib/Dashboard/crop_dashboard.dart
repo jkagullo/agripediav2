@@ -166,7 +166,7 @@ class _CropDashboardState extends State<CropDashboard> {
                       ),
                     ),
                     Text(
-                      formattedDate,
+                      date.isNotEmpty ? date : 'Loading...',
                       style: const TextStyle(
                         color: Color.fromRGBO(38, 50, 56, 1),
                         fontWeight: FontWeight.w400,

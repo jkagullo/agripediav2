@@ -21,6 +21,7 @@ class LoginService {
 
         if (userDoc.exists){
           return null; // login successful
+
         }else{
           return 'User does not exist';
         }

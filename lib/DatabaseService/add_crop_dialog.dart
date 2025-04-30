@@ -224,17 +224,19 @@ class _AddCropDialogState extends State<AddCropDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context); // Close the dialog
+          },
           child: Text(
             'Cancel',
             style: TextStyle(
-              color: Colors.red[900],
+              color: Colors.red,
             ),
           ),
         ),
         TextButton(
           onPressed: isLoading
-              ? null // Disable confirm button while loading
+              ? null // Disable the button while loading
               : () async {
             String cropName = cropNameController.text.trim();
             String hardwareID = hardwareIDController.text.trim();
@@ -243,6 +245,10 @@ class _AddCropDialogState extends State<AddCropDialog> {
                 plantingDate != null &&
                 hardwareID.isNotEmpty &&
                 selectedCropType != null) {
+              setState(() {
+                isLoading = true; // Start loading
+              });
+
               try {
                 await addCropToUser(
                   cropName,
@@ -253,21 +259,30 @@ class _AddCropDialogState extends State<AddCropDialog> {
                 );
                 Navigator.pop(context);
               } catch (e) {
-                // Catching the exception thrown when hardware ID is already linked
-                if (e is Exception) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
-                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(e.toString())),
+                );
+              } finally {
+                setState(() {
+                  isLoading = false; // Stop loading
+                });
               }
             } else {
-              // Handle empty fields
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Please fill all fields")),
               );
             }
           },
-          child: Text(
+          child: isLoading
+              ? const SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.green,
+            ),
+          )
+              : Text(
             'Confirm',
             style: TextStyle(
               color: Colors.blue,

@@ -159,34 +159,75 @@ class _DetectionPageState extends State<DetectionPage> {
                                 children: hourDocs.map((hourDoc) {
                                   final detectionData = hourDoc.data() as Map<String, dynamic>;
 
-                                  // Handle the hardware format (image, result, etc.)
-                                  final imageUrl = detectionData['image'] ?? '';
-                                  final result = detectionData['result'] ?? 'Unknown';
+                                  // Get the main imageUrl and result fields
+                                  final mainImageUrl = detectionData['image'] ?? '';
+                                  final mainResult = detectionData['result'] ?? 'Unknown';
 
-                                  return ListTile(
-                                    leading: GestureDetector(
-                                      onTap: () {
-                                        _showImageDialog(imageUrl);
-                                      },
-                                      child: imageUrl.isNotEmpty
-                                          ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
-                                          : Icon(Icons.image, color: Colors.lightGreen[900]),
-                                    ),
-                                    title: Text(
-                                      'Result: $result',
-                                      style: TextStyle(
-                                        color: Colors.lightGreen[900],
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      'Detected at: ${detectionData['createdAt'] != null ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate()) : 'N/A'}',
-                                      style: TextStyle(
-                                        color: Colors.lightGreen[900],
-                                        fontSize: 14,
-                                      ),
-                                    ),
+                                  // Collect all crop_box_X map fields
+                                  final cropBoxes = detectionData.entries
+                                      .where((entry) => entry.key.startsWith('crop_box_') && entry.value is Map)
+                                      .map((entry) => entry.value as Map<String, dynamic>)
+                                      .toList();
+
+                                  // Build list tiles for the main detection data and crop_box_X entries
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      if (mainImageUrl.isNotEmpty || mainResult != 'Unknown')
+                                        ListTile(
+                                          leading: GestureDetector(
+                                            onTap: () {
+                                              if (mainImageUrl.isNotEmpty) {
+                                                _showImageDialog(mainImageUrl);
+                                              }
+                                            },
+                                            child: mainImageUrl.isNotEmpty
+                                                ? Image.network(mainImageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                                : Icon(Icons.image, color: Colors.lightGreen[900]),
+                                          ),
+                                          title: Text(
+                                            'Result: $mainResult',
+                                            style: TextStyle(
+                                              color: Colors.lightGreen[900],
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            'Detected at: ${detectionData['createdAt'] != null ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate()) : 'N/A'}',
+                                            style: TextStyle(
+                                              color: Colors.lightGreen[900],
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      // List tiles for each crop_box_X map field
+                                      ...cropBoxes.map((box) {
+                                        final croppedImageUrl = box['croppedImageUrl'] ?? '';
+                                        final croppedResult = box['result'] ?? 'Unknown';
+
+                                        return ListTile(
+                                          leading: GestureDetector(
+                                            onTap: () {
+                                              if (croppedImageUrl.isNotEmpty) {
+                                                _showImageDialog(croppedImageUrl);
+                                              }
+                                            },
+                                            child: croppedImageUrl.isNotEmpty
+                                                ? Image.network(croppedImageUrl, width: 50, height: 50, fit: BoxFit.cover)
+                                                : Icon(Icons.image, color: Colors.lightGreen[900]),
+                                          ),
+                                          title: Text(
+                                            'Result: $croppedResult',
+                                            style: TextStyle(
+                                              color: Colors.lightGreen[900],
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ],
                                   );
                                 }).toList(),
                               );

@@ -13,7 +13,7 @@ void main() async {
   await Firebase.initializeApp();
 
   try{
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+    await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
     Workmanager().registerPeriodicTask(
       "cropMonitorTask",
       "checkCropStatus",
