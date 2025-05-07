@@ -101,22 +101,91 @@ class _AddCropQRState extends State<AddCropQR> {
     }
   }
 
-  void _showCropDialog() {
-    showDialog(
+  Future<void> _showCropDialog() {
+    return showDialog(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: Text('Add Crop', style: TextStyle(color: Colors.lightGreen[900], fontSize: 22)),
-          content: StatefulBuilder(
-            builder: (dialogContext, setDialogState) {
-              return SingleChildScrollView(
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            bool isLoading = false;
+
+            Future<void> _saveCrop() async {
+              if (scannedHardwareID == null ||
+                  cropNameController.text.isEmpty ||
+                  plantingDate == null ||
+                  selectedCropType == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please fill all fields")),
+                );
+                return;
+              }
+
+              setDialogState(() {
+                isLoading = true;
+              });
+
+              try {
+                final user = FirebaseAuth.instance.currentUser;
+                if (user == null) {
+                  throw Exception("User not logged in");
+                }
+
+                String? imageUrl;
+                if (selectedImage != null) {
+                  final storageRef = FirebaseStorage.instance
+                      .ref()
+                      .child('crop_images/${user.uid}/${cropNameController.text}_${DateTime.now().millisecondsSinceEpoch}.jpg');
+                  await storageRef.putFile(selectedImage!);
+                  imageUrl = await storageRef.getDownloadURL();
+                }
+
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user.uid)
+                    .collection('crops')
+                    .doc()
+                    .set({
+                  'cropName': cropNameController.text,
+                  'plantingDate': plantingDate,
+                  'hardwareID': scannedHardwareID,
+                  'cropType': selectedCropType,
+                  'imageUrl': imageUrl ?? '',
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Crop added successfully")),
+                );
+
+                // Dispose the Scan QR page correctly
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop(); // Close the dialog
+                }
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop(); // Close the AddCropQR screen
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Error adding crop: $e")),
+                );
+              } finally {
+                setDialogState(() {
+                  isLoading = false;
+                });
+              }
+            }
+
+            return AlertDialog(
+              title: Text('Add Crop', style: TextStyle(color: Colors.lightGreen[900], fontSize: 22)),
+              content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     selectedImage != null
                         ? Image.file(selectedImage!, height: 100)
                         : TextButton.icon(
-                      onPressed: () async {
+                      onPressed: isLoading
+                          ? null
+                          : () async {
                         await _pickImage();
                         setDialogState(() {});
                       },
@@ -153,8 +222,10 @@ class _AddCropQRState extends State<AddCropQR> {
                           borderSide: BorderSide(color: Colors.lightGreen[900]!),
                         ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
+                      onChanged: isLoading
+                          ? null
+                          : (value) {
+                        setDialogState(() {
                           selectedCropType = value;
                         });
                       },
@@ -164,7 +235,9 @@ class _AddCropQRState extends State<AddCropQR> {
                       title: Text(
                           plantingDate == null ? "Select Planting Date" : "Planting Date: ${plantingDate!.toLocal()}"),
                       trailing: const Icon(Icons.calendar_today),
-                      onTap: () async {
+                      onTap: isLoading
+                          ? null
+                          : () async {
                         DateTime? selectedDate = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
@@ -172,10 +245,9 @@ class _AddCropQRState extends State<AddCropQR> {
                           lastDate: DateTime.now(),
                         );
                         if (selectedDate != null) {
-                          setState(() {
+                          setDialogState(() {
                             plantingDate = selectedDate;
                           });
-                          setDialogState(() {});
                         }
                       },
                     ),
@@ -183,22 +255,32 @@ class _AddCropQRState extends State<AddCropQR> {
                     Text("Hardware ID: $scannedHardwareID"),
                   ],
                 ),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-            onPressed: () async {
-            await _saveCrop();
-              if (mounted) Navigator.of(dialogContext).pop();
-              },
-            child: const Text("Add"),
-           ),
-          ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: isLoading ? null : _saveCrop,
+                  child: isLoading
+                      ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : const Text("Add"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
