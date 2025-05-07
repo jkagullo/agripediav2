@@ -193,12 +193,17 @@ class _DetectionPageState extends State<DetectionPage> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          subtitle: Text(
-                                            'Detected at: ${detectionData['createdAt'] != null ? DateFormat('h:mm a').format((detectionData['createdAt'] as Timestamp).toDate()) : 'N/A'}',
-                                            style: TextStyle(
-                                              color: Colors.lightGreen[900],
-                                              fontSize: 14,
-                                            ),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Recommendation: ${detectionData['recommendation'] ?? 'No recommendation available.'}',
+                                                style: TextStyle(
+                                                  color: Colors.lightGreen[900],
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       // List tiles for each crop_box_X map field
@@ -224,6 +229,18 @@ class _DetectionPageState extends State<DetectionPage> {
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                             ),
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Recommendation: ${detectionData['recommendation'] ?? 'No recommendation available.'}',
+                                                style: TextStyle(
+                                                  color: Colors.lightGreen[900],
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         );
                                       }).toList(),

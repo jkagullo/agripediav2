@@ -116,6 +116,36 @@ flutter:
     - assets/images/cucumber1.jpg
     - assets/images/cucumber2.jpg
     - assets/images/cucumber3.jpg
+    - assets/images/bacterial_leaf_spot1.jpg
+    - assets/images/bacterial_leaf_spot2.jpg
+    - assets/images/bacterial_leaf_spot3.jpg
+    - assets/images/early_blight1.jpg
+    - assets/images/early_blight2.jpg
+    - assets/images/early_blight3.jpg
+    - assets/images/healthy1.jpg
+    - assets/images/healthy2.jpg
+    - assets/images/healthy3.jpg
+    - assets/images/late_blight1.jpg
+    - assets/images/late_blight2.jpg
+    - assets/images/late_blight3.jpg
+    - assets/images/leaf_mold1.jpg
+    - assets/images/leaf_mold2.jpg
+    - assets/images/leaf_mold3.jpg
+    - assets/images/leaf_mosaic1.jpg
+    - assets/images/leaf_mosaic2.jpg
+    - assets/images/leaf_mosaic3.jpg
+    - assets/images/septoria_leaf_spot1.jpg
+    - assets/images/septoria_leaf_spot2.jpg
+    - assets/images/septoria_leaf_spot3.jpg
+    - assets/images/target_spot1.jpg
+    - assets/images/target_spot2.jpg
+    - assets/images/target_spot3.jpg
+    - assets/images/yellow_leaf_curl1.jpg
+    - assets/images/yellow_leaf_curl2.jpg
+    - assets/images/yellow_leaf_curl3.jpg
+    - assets/images/spider_mites1.jpg
+    - assets/images/spider_mites2.jpg
+    - assets/images/spider_mites3.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:

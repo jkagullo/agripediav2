@@ -13,29 +13,18 @@ class CropDashboard extends StatefulWidget {
 }
 
 class _CropDashboardState extends State<CropDashboard> {
-  late Stream<DocumentSnapshot> liveDataStream = Stream.empty(); // Initialize with an empty stream
+  late Stream<QuerySnapshot> liveDataStream = Stream.empty();
   String? cropName;
   bool loading = true;
-  String soil1 = '';
-  String soil2 = '';
-  String soil3 = '';
-  String soilFinal = '';
-  String temperature = '';
-  String light = '';
-  String humidity = '';
   String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String date = '';
-  String hour = '';
-  String hId = '';
 
   @override
   void initState() {
     super.initState();
     fetchCropName();
-    fetchLiveData();
+    fetchLiveDataStream();
   }
 
-  // comment to push
   Future<void> fetchCropName() async {
     try {
       DocumentSnapshot cropDoc = await FirebaseFirestore.instance
@@ -55,9 +44,8 @@ class _CropDashboardState extends State<CropDashboard> {
     }
   }
 
-  void fetchLiveData() async {
+  void fetchLiveDataStream() async {
     try {
-      // Fetch the hardwareID from the user's crops collection
       DocumentSnapshot cropDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -65,64 +53,19 @@ class _CropDashboardState extends State<CropDashboard> {
           .doc(widget.cropId)
           .get();
 
-      String hardwareID = cropDoc['hardwareID']; // Get the hardwareID
-      hId = hardwareID;
+      String hardwareID = cropDoc['hardwareID'];
 
-      // Query to get the latest document from the hardware collection
-      QuerySnapshot dateSnapshot = await FirebaseFirestore.instance
-          .collection(hardwareID)
-          .orderBy('createdAt', descending: true) // Order by createdAt in descending order
-          .limit(1) // Get only the latest document
-          .get();
-
-      if (dateSnapshot.docs.isEmpty) {
-        print('No live data found');
-        return;
-      }
-
-      // Get the latest document
-      DocumentSnapshot latestDateDoc = dateSnapshot.docs.first;
-
-      // Extract the document ID (e.g., "2025-01-06-01:03")
-      String documentID = latestDateDoc.id;
-
-      // Split the document ID to extract date and hour
-      List<String> parts = documentID.split('-');
-      String extractedDate = "${parts[0]}-${parts[1]}-${parts[2]}"; // "2025-01-06"
-      String extractedHour = parts[3]; // "01:03"
-
-      // Extract live data from the document
-      Map<String, dynamic> liveData = latestDateDoc.data() as Map<String, dynamic>;
-      double soilMoisture1 = double.tryParse(liveData['soilMoisture1'].toString()) ?? 0.0;
-      double soilMoisture2 = double.tryParse(liveData['soilMoisture2'].toString()) ?? 0.0;
-      double soilMoisture3 = double.tryParse(liveData['soilMoisture3'].toString()) ?? 0.0;
-
-      double soilAverage = (soilMoisture1 + soilMoisture2 + soilMoisture3) / 3;
-
-      // Update the state with the fetched data
       setState(() {
-        date = extractedDate; // Update date
-        hour = extractedHour; // Update hour
-        soil1 = soilMoisture1.toStringAsFixed(2);
-        soil2 = soilMoisture2.toStringAsFixed(2);
-        soil3 = soilMoisture3.toStringAsFixed(2);
-        soilFinal = soilAverage.toStringAsFixed(2);
-        temperature = liveData['temperature'].toString();
-        light = liveData['lightIntensity'].toString();
-        humidity = liveData['humidity'].toString();
+        liveDataStream = FirebaseFirestore.instance
+            .collection(hardwareID)
+            .orderBy('createdAt', descending: true)
+            .limit(1)
+            .snapshots();
       });
-
-      print('Date: $date');
-      print('Hour: $hour');
-      print('Soil: $soilFinal');
-      print('Temperature: $temperature');
-      print('Light: $light');
-      print('Humidity: $humidity');
     } catch (e) {
-      print('Error fetching live data: $e');
+      print('Error setting up live data stream: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +77,7 @@ class _CropDashboardState extends State<CropDashboard> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/images/splash_icon.png', height: 50),
-            SizedBox(width: 60),
+            const SizedBox(width: 60),
           ],
         ),
       ),
@@ -143,92 +86,116 @@ class _CropDashboardState extends State<CropDashboard> {
           width: double.infinity,
           color: Colors.grey[200],
           padding: const EdgeInsets.all(5),
-          child: Column(
-            children: [
-              Container(
-                alignment: const Alignment(-0.8, 0.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Dashboard',
-                      style: TextStyle(
-                        color: Color.fromRGBO(38, 50, 56, 1),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 25,
-                      ),
-                    ),
-                    Text(
-                      cropName ?? 'Loading...',
-                      style: const TextStyle(
-                        color: Color.fromRGBO(38, 50, 56, 1),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                      ),
-                    ),
-                    Text(
-                      date.isNotEmpty ? date : 'Loading...',
-                      style: const TextStyle(
-                        color: Color.fromRGBO(38, 50, 56, 1),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      hour.isNotEmpty ? hour : 'Loading...',
-                      style: const TextStyle(
-                        color: Color.fromRGBO(38, 50, 56, 1),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          child: StreamBuilder<QuerySnapshot>(
+            stream: liveDataStream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              var doc = snapshot.data!.docs.first;
+              var liveData = doc.data() as Map<String, dynamic>;
+
+              double soilMoisture1 = double.tryParse(liveData['soilMoisture1'].toString()) ?? 0.0;
+              double soilMoisture2 = double.tryParse(liveData['soilMoisture2'].toString()) ?? 0.0;
+              double soilMoisture3 = double.tryParse(liveData['soilMoisture3'].toString()) ?? 0.0;
+              double soilAverage = (soilMoisture1 + soilMoisture2 + soilMoisture3) / 3;
+
+              String temperature = liveData['temperature'].toString();
+              String light = liveData['lightIntensity'].toString();
+              String humidity = liveData['humidity'].toString();
+
+              List<String> parts = doc.id.split('-');
+              String extractedDate = "${parts[0]}-${parts[1]}-${parts[2]}";
+              String extractedHour = parts[3];
+
+              return Column(
                 children: [
-                  FactorWidget(
-                    title: 'Water',
-                    icon: 'assets/images/Analysis-water.png',
-                    color: const Color.fromRGBO(30, 136, 229, 1),
-                    value: soilFinal,
-                    loading: loading,
+                  Container(
+                    alignment: const Alignment(-0.8, 0.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Dashboard',
+                          style: TextStyle(
+                            color: Color.fromRGBO(38, 50, 56, 1),
+                            fontWeight: FontWeight.w900,
+                            fontSize: 25,
+                          ),
+                        ),
+                        Text(
+                          cropName ?? 'Loading...',
+                          style: const TextStyle(
+                            color: Color.fromRGBO(38, 50, 56, 1),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          extractedDate,
+                          style: const TextStyle(
+                            color: Color.fromRGBO(38, 50, 56, 1),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          extractedHour,
+                          style: const TextStyle(
+                            color: Color.fromRGBO(38, 50, 56, 1),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(width: 13),
-                  FactorWidget(
-                    title: 'Temperature',
-                    icon: 'assets/images/Analysis-temp.png',
-                    color: const Color.fromRGBO(224, 22, 22, 1),
-                    value: temperature,
-                    loading: loading,
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FactorWidget(
+                        title: 'Water',
+                        icon: 'assets/images/Analysis-water.png',
+                        color: const Color.fromRGBO(30, 136, 229, 1),
+                        value: soilAverage.toStringAsFixed(2),
+                        loading: false,
+                      ),
+                      const SizedBox(width: 13),
+                      FactorWidget(
+                        title: 'Temperature',
+                        icon: 'assets/images/Analysis-temp.png',
+                        color: const Color.fromRGBO(224, 22, 22, 1),
+                        value: temperature,
+                        loading: false,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FactorWidget(
+                        title: 'Light',
+                        icon: 'assets/images/Analysis-sun.png',
+                        color: const Color.fromRGBO(253, 192, 55, 1),
+                        value: light,
+                        loading: false,
+                      ),
+                      const SizedBox(width: 13),
+                      FactorWidget(
+                        title: 'Humidity',
+                        icon: 'assets/images/Analysis-humid.png',
+                        color: const Color.fromRGBO(0, 105, 46, 1),
+                        value: humidity,
+                        loading: false,
+                      ),
+                    ],
                   ),
                 ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FactorWidget(
-                    title: 'Light',
-                    icon: 'assets/images/Analysis-sun.png',
-                    color: const Color.fromRGBO(253, 192, 55, 1),
-                    value: light,
-                    loading: loading,
-                  ),
-                  const SizedBox(width: 13),
-                  FactorWidget(
-                    title: 'Humidity',
-                    icon: 'assets/images/Analysis-humid.png',
-                    color: const Color.fromRGBO(0, 105, 46, 1),
-                    value: humidity,
-                    loading: loading,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 13),
-            ],
+              );
+            },
           ),
         ),
       ),

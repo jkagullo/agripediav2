@@ -32,6 +32,19 @@ class _DetectionPageState extends State<DetectionScreen> {
     _performDetection();
   }
 
+  final Map<String, String> diseaseRecommendations = {
+    'bacterial_spot': 'Use copper-based fungicides and avoid overhead irrigation.',
+    'early_blight': 'Apply fungicides and practice crop rotation.',
+    'late_blight': 'Remove infected plants and use resistant varieties.',
+    'leaf_Mold': 'Ensure proper ventilation and reduce humidity.',
+    'septoria_leaf_spot': 'Use fungicides and remove infected leaves.',
+    'spider_mites': 'Spray with insecticidal soap or neem oil.',
+    'target_Spot': 'Apply fungicides and avoid water stress.',
+    'yellow_Leaf_Curl_Virus': 'Control whiteflies and use resistant varieties.',
+    'mosaic_virus': 'Remove infected plants and control aphids.',
+    'healthy': 'No action needed. Keep monitoring your crop.',
+  };
+
   Future<void> _loadModel() async {
     try {
       _interpreter = await Interpreter.fromAsset('assets/october24.tflite');
@@ -124,11 +137,16 @@ class _DetectionPageState extends State<DetectionScreen> {
         await dateDocRef.set({'initialized': true});
       }
 
+      final normalizedResult = result.trim().toLowerCase();
+      print("normalized result: $normalizedResult");
+      final recommendation = diseaseRecommendations[normalizedResult] ?? 'No recommendation available.';
+
       // Upload detection result
       final hourDocRef = dateDocRef.collection('hours').doc(time);
       await hourDocRef.set({
         'image': imageUrl,
         'result': result,
+        'recommendation': recommendation,
         'createdAt': timestamp,
       });
 

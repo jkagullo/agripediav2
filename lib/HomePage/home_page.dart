@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:agripediav3/Dashboard/dashboard_select.dart';
+import 'package:agripediav3/Disease/disease_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
     DashboardSelect(),
     DetectionPage(),
     Cropedia(),
+    DiseasePage(),
     SettingsPage(),
   ];
 
@@ -205,6 +207,10 @@ class _MyHomePageState extends State<MyHomePage> {
           const BottomNavigationBarItem(
             icon: Icon(Icons.agriculture),
             label: 'Cropedia',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.healing),
+            label: 'Disease',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.settings),
